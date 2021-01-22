@@ -5,8 +5,42 @@ eeglabpath = fileparts(which('eeglab.m'));
 % load eeglab
 eeglab;
 
+
+cd D:\Dropbox\Synchrony_Adam\EEG_Data\LSL
+list_of_files = dir('**/*.xdf');
+
+files_info = [];
+for file_idx = 1:size(list_of_files,1)
+    d = load_xdf(list_of_files(file_idx).name);
+    lsl_fields = [];
+for lsl_field = 1:size(d,2)
+    lsl_fields = [lsl_fields size(d{1,lsl_field}.time_series,2)];
+end
+    lsl_fields_sorted = sort(lsl_fields, 'descend');
+    files_info(file_idx,1) = lsl_fields_sorted(1);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    
+    files_info(file_idx,3) = lsl_fields_sorted(2);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    
+%     if size(d{1,1}.time_series,2) > 150000
+%         files_correct(file_idx) = 1;
+%     else
+%         files_correct(file_idx) = 0;
+%         files_incorrect = [files_incorrect file_idx];
+%     end
+end
+
+
+
+for eeg_file = 1:size(list_of_files)
+
 % load xdf file with both datasets + video frames
-d = load_xdf('SNS_015L_016S_N_NS.xdf');
+d = load_xdf(list_of_files.name(eeg_file));
 %load first subject into eeglab template
 eeg_sub1 = pop_loadxdf('SNS_015L_016S_N_NS.xdf');
 eeg_sub1.pnts = 150001;
@@ -14,10 +48,16 @@ eeg_sub1.times = eeg_sub1.times(1:150001);
 eeg_sub1.data = eeg_sub1.data(:,1:150001);
 eeg_sub1.xmax = 300;
 
+lsl_fields = [1];
+for lsl_field = 2:size(d,2)
+    lsl_fields = [lsl_fields size(d{1,lsl_field}.time_series,2)];
+end
+[maxnum maxind] = max(lsl_fields);
+
 % copy the eeglab template for the sub2 and replace sub1 data with sub2
 % data
 eeg_sub2 = eeg_sub1;
-eeg_sub2.data = d{1,4}.time_series;
+eeg_sub2.data = d{1,maxind}.time_series;
 eeg_sub2.data = eeg_sub2.data(:,1:150001);
 
 
@@ -81,9 +121,8 @@ for sub = 1:2
     EEG = clean_artifacts(EEG);
 
     % save removed channels
-    removed_channels = ~ismember({full_chanlocs.labels},{EEG.chanlocs.labels})
-    full_chanlocs(removed_channels).labels
-    
+    removed_channels = ~ismember({full_chanlocs.labels},{EEG.chanlocs.labels});
+    EEG.removed_channels = {full_chanlocs(removed_channels).labels};
     
     % high pass 2 Hz for data used for ICA calculations
     eeg_tmp = pop_eegfiltnew(EEG, 2, []);   % highpass  2 Hz to not include slow drifts
@@ -138,6 +177,9 @@ for sub = 1:2
     
     % remove components
     EEG = pop_subcomp( EEG, components_to_remove, 0);
+    % save removed components in struct
+    EEG.removed_components = components_to_remove;
+    
     % interpolate removed channels    
     EEG = pop_interp(EEG, full_chanlocs,'spherical');
     
@@ -149,9 +191,6 @@ for sub = 1:2
         eeg_sub2 = EEG;
     end
 end
-
-%eeg_sub1 = pop_loadset('cleaned_SNS_015L_016S_N_NS_sub_1.set');
-%eeg_sub2 = pop_loadset('cleaned_SNS_015L_016S_N_NS_sub_2.set');
 
 %EPOCH %%%
 window = [0 .999];
@@ -184,6 +223,7 @@ for i = 1:size(eeg_sub2.event,2)
     count = count + 500;
     latency_sub2(i) = count; 
 end
+
 latency_sub1 = num2cell(latency_sub1');
 latency_sub2 = num2cell(latency_sub2');
 
@@ -195,10 +235,23 @@ eeg_sub2.data = reshape(eeg_sub2.data, 24, []);
 [eeg_sub1.event.latency] = latency_sub1{:};
 [eeg_sub2.event.latency] = latency_sub2{:};
 
-eeg_sub1 = pop_saveset(eeg_sub1, 'filename', sprintf('hyper_%s', eeg_sub1.filename));
-eeg_sub2 = pop_saveset(eeg_sub2, 'filename', sprintf('hyper_%s', eeg_sub2.filename));
+eeg_sub1.trials =[];
+eeg_sub2.trials =[];
+
+
+% i commented out line 495 in the script 'po_editset': '%EEGOUT =
+% eeg_checkset(EEGOUT);' because checkset was not allowing for manual
+% concatation of data - change that if you run the script but remember to
+% change it back afterwards.
+
+% and line 132 in pop_saveset
+
+eeg_sub1 = pop_editset(eeg_sub1, 'setname', sprintf('hyper_%s', eeg_sub1.filename));
+eeg_sub1 = pop_saveset(eeg_sub1, 'filename', sprintf('hyper_%s', eeg_sub1.filename), 'check', 'off');
+eeg_sub2 = pop_editset(eeg_sub2, 'setname', sprintf('hyper_%s', eeg_sub2.filename));
+eeg_sub2 = pop_saveset(eeg_sub2, 'filename', sprintf('hyper_%s', eeg_sub2.filename), 'check', 'off');
 
     
-    
+end
     
     

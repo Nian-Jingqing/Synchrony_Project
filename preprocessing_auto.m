@@ -6,10 +6,41 @@ eeglabpath = fileparts(which('eeglab.m'));
 eeglab;
 
 
+cd D:\Dropbox\Synchrony_Adam\EEG_Data\LSL
+list_of_files = dir('**/*.xdf');
 
+files_info = [];
+for file_idx = 1:size(list_of_files,1)
+    d = load_xdf(list_of_files(file_idx).name);
+    lsl_fields = [];
+for lsl_field = 1:size(d,2)
+    lsl_fields = [lsl_fields size(d{1,lsl_field}.time_series,2)];
+end
+    lsl_fields_sorted = sort(lsl_fields, 'descend');
+    files_info(file_idx,1) = lsl_fields_sorted(1);
+    files_info(file_idx,2) = lsl_fields_sorted(2);
+    
+    files_info(file_idx,3) = lsl_fields(1);
+    files_info(file_idx,4) = lsl_fields(2);
+    files_info(file_idx,5) = lsl_fields(3);
+    files_info(file_idx,6) = lsl_fields(4);
+    files_info(file_idx,7) = lsl_fields(5);
+    files_info(file_idx,8) = lsl_fields(6);
+    
+%     if size(d{1,1}.time_series,2) > 150000
+%         files_correct(file_idx) = 1;
+%     else
+%         files_correct(file_idx) = 0;
+%         files_incorrect = [files_incorrect file_idx];
+%     end
+end
+
+
+
+for eeg_file = 1:size(list_of_files)
 
 % load xdf file with both datasets + video frames
-d = load_xdf('SNS_015L_016S_N_NS.xdf');
+d = load_xdf(list_of_files.name(eeg_file));
 %load first subject into eeglab template
 eeg_sub1 = pop_loadxdf('SNS_015L_016S_N_NS.xdf');
 eeg_sub1.pnts = 150001;
@@ -17,10 +48,16 @@ eeg_sub1.times = eeg_sub1.times(1:150001);
 eeg_sub1.data = eeg_sub1.data(:,1:150001);
 eeg_sub1.xmax = 300;
 
+lsl_fields = [1];
+for lsl_field = 2:size(d,2)
+    lsl_fields = [lsl_fields size(d{1,lsl_field}.time_series,2)];
+end
+[maxnum maxind] = max(lsl_fields);
+
 % copy the eeglab template for the sub2 and replace sub1 data with sub2
 % data
 eeg_sub2 = eeg_sub1;
-eeg_sub2.data = d{1,4}.time_series;
+eeg_sub2.data = d{1,maxind}.time_series;
 eeg_sub2.data = eeg_sub2.data(:,1:150001);
 
 
@@ -215,6 +252,6 @@ eeg_sub2 = pop_editset(eeg_sub2, 'setname', sprintf('hyper_%s', eeg_sub2.filenam
 eeg_sub2 = pop_saveset(eeg_sub2, 'filename', sprintf('hyper_%s', eeg_sub2.filename), 'check', 'off');
 
     
-    
+end
     
     
