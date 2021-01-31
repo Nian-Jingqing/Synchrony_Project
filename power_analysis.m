@@ -283,7 +283,7 @@ caxis([bottom_gamma top_gamma]);
 colorbar;
 title('Listener Neutral Gamma')
 
-colormap hot
+colormap parula
 set(gcf,'Position',[50 50 900 900])
 
 cd D:\Dropbox\Synchrony_Adam\Figures\Power_analysis
@@ -449,7 +449,7 @@ caxis([bottom_gamma top_gamma]);
 colorbar;
 title('Listener Neutral Gamma')
 
-colormap hot
+colormap parula
 set(gcf,'Position',[50 50 900 900])
 
 cd D:\Dropbox\Synchrony_Adam\Figures\Power_analysis
