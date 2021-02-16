@@ -7,7 +7,7 @@ addpath(genpath('D:\Dropbox\Synchrony_Adam'))
 %column 2 == raw signals 
 
 %ECG
-ECG_sub_1 = importdata('SNS_013L_N_11161318_ECG.txt');
+ECG_sub_1 = importdata('SNS_005_11061518_PCG.txt');
 ECG_sub_2 = importdata('SNS_014S_N_11161318_ECG.txt');
 
 %PCG

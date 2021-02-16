@@ -174,7 +174,7 @@ for sub = 1:2
     % high pass 2 Hz for data used for ICA calculations
     eeg_tmp = pop_eegfiltnew(EEG, 2, []);   % highpass  2 Hz to not include slow drifts
     % create amica folder
-    cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed
+    cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed_Second
     mkdir(sprintf('amica_%s_%d',EEG.filename, sub))
     outDir = what(sprintf('amica_%s_%d',EEG.filename,sub));
     %run ICA
