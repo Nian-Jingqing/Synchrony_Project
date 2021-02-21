@@ -22,8 +22,10 @@ pvalues_RS3 = zeros(23, 43,24,24);
 conditions = zeros(23,1);
 
 % for loop
-for pair = 1:23
+%for pair = 1:23
     
+pair = 1;
+
     eeg_sub_1_RS1 = pop_loadset('filename',sprintf('hyper_cleaned_SNS_%s%s_%s%s_%s_RS1_sub_1.set',cell2mat(pairs_A(pair)),list_of_files(pair).name(22), cell2mat(pairs_B(pair)),list_of_files(pair).name(27),list_of_files(pair).name(29)), 'check', 'off', 'loadmode', 'info');
     eeg_sub_2_RS1 = pop_loadset('filename',sprintf('hyper_cleaned_SNS_%s%s_%s%s_%s_RS1_sub_2.set',cell2mat(pairs_A(pair)),list_of_files(pair).name(22), cell2mat(pairs_B(pair)),list_of_files(pair).name(27),list_of_files(pair).name(29)), 'check', 'off', 'loadmode', 'info');
     
@@ -32,6 +34,10 @@ for pair = 1:23
     
     eeg_sub_1_RS3 = pop_loadset('filename',sprintf('hyper_cleaned_SNS_%s%s_%s%s_%s_RS3_sub_1.set',cell2mat(pairs_A(pair)),list_of_files(pair).name(22), cell2mat(pairs_B(pair)),list_of_files(pair).name(27),list_of_files(pair).name(29)), 'check', 'off', 'loadmode', 'info');
     eeg_sub_2_RS3 = pop_loadset('filename',sprintf('hyper_cleaned_SNS_%s%s_%s%s_%s_RS3_sub_2.set',cell2mat(pairs_A(pair)),list_of_files(pair).name(22), cell2mat(pairs_B(pair)),list_of_files(pair).name(27),list_of_files(pair).name(29)), 'check', 'off', 'loadmode', 'info');
+    
+    
+    
+    
     
     if list_of_files(pair).name(29) == 'E'
         conditions(pair) = 'E';
@@ -146,4 +152,4 @@ for pair = 1:23
             pvalues_RS3(pair,:,:,:) = pvalues;
         end
     end
-end
+%end
