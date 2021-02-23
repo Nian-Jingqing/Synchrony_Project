@@ -52,7 +52,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS1_RS3(frequency,:,:)));
 colorbar;
-caxis([-8 8]);
+caxis([-7.6 6.8]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -90,7 +90,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS1_RS2_e(frequency,:,:)));
 colorbar;
-caxis([-8 8]);
+caxis([-7.6 6.8]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -126,7 +126,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS1_RS2_n(frequency,:,:)));
 colorbar;
-caxis([-8 8]);
+caxis([-7.6 6.8]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -165,7 +165,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS2_RS3_e(frequency,:,:)));
 colorbar;
-caxis([-8 8]);
+caxis([-7.6 6.8]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -192,7 +192,7 @@ subplot(7,7,frequency)
 imagesc(squeeze(pvalues_RS2_RS3_n(frequency,:,:)));
 colorbar;
 caxis([0 .05]);
-title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
+title(sprintf('Frequency %.2 Hz',frequency+1));
 end
 
 figure()
@@ -201,6 +201,6 @@ for frequency = 1:43
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS2_RS3_n(frequency,:,:)));
 colorbar;
-caxis([-8 8]);
-title(sprintf('Frequency %.2f Hz', round(frex(frequency),2)));
+caxis([-7.6 6.8]);
+title(sprintf('Frequency %d Hz',frequency+1));
 end
