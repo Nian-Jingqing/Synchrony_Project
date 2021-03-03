@@ -3,12 +3,23 @@ cd D:\Dropbox\Synchrony_Adam
 addpath(genpath('D:\Dropbox\Synchrony_Adam'))
 
 % set colormap to parula
-colormap(parula)
+colormap(parula);
 num_freq = 44;
 min_freq =  2; % in Hz
 max_freq = 45; % in HZ
 
-
+% 
+% cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed\hyper_cleaned\
+% list_of_files = dir('**/*ES_sub_1.set');
+% 
+% roles = zeros(23,1);
+% for file = 1:length(list_of_files)
+%         roles(file) = char(list_of_files(file).name(22));
+% end
+% 
+% 
+% % 83 is S
+% % 76 is L
 frex  = logspace(log10(min_freq),log10(max_freq),num_freq);
 
 % load correlations files
@@ -29,7 +40,7 @@ tvalues_RS1_RS3 = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(correlations_RS1(:,frequency,electrode_sub1,electrode_sub2),correlations_RS2(:,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(correlations_RS1(:,frequency,electrode_sub1,electrode_sub2),correlations_RS3(:,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
