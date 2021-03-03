@@ -3,7 +3,7 @@ cd D:\Dropbox\Synchrony_Adam
 addpath(genpath('D:\Dropbox\Synchrony_Adam'))
 
 % set colormap to parula
-colormap(parula)
+colormap(parula);
 num_freq = 44;
 min_freq =  2; % in Hz
 max_freq = 45; % in HZ
@@ -11,13 +11,10 @@ max_freq = 45; % in HZ
 
 frex  = logspace(log10(min_freq),log10(max_freq),num_freq);
 
-% load correlations files
-load('correlations_RS1.mat');
-load('correlations_RS2.mat');
-load('correlations_RS3.mat');
-load('pvalues_RS1.mat');
-load('pvalues_RS2.mat');
-load('pvalues_RS3.mat');
+% load angle difference files
+load('angle_diff_RS1.mat');
+load('angle_diff_RS2.mat');
+load('angle_diff_RS3.mat');
 load('conditions.mat');
 
 % t test between RS1 and RS3
@@ -29,7 +26,7 @@ tvalues_RS1_RS3 = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(correlations_RS1(:,frequency,electrode_sub1,electrode_sub2),correlations_RS2(:,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(angle_diff_RS1(:,frequency,electrode_sub1,electrode_sub2),angle_diff_RS3(:,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -46,13 +43,15 @@ caxis([0 .05]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
+%tmp = pvalues_RS1_RS3 < .05;
+
 figure()
 
 for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS1_RS3(frequency,:,:)));
 colorbar;
-caxis([-7.6 6.8]);
+caxis([-8.9 6.9]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -67,7 +66,7 @@ tvalues_RS1_RS2_e = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(correlations_RS1(conditions==69,frequency,electrode_sub1,electrode_sub2),correlations_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(angle_diff_RS1(conditions==69,frequency,electrode_sub1,electrode_sub2),angle_diff_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS2_e(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS2_e(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -90,7 +89,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS1_RS2_e(frequency,:,:)));
 colorbar;
-caxis([-7.6 6.8]);
+caxis([-8.9 6.9]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -103,7 +102,7 @@ tvalues_RS1_RS2_n = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(correlations_RS1(conditions==78,frequency,electrode_sub1,electrode_sub2),correlations_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(angle_diff_RS1(conditions==78,frequency,electrode_sub1,electrode_sub2),angle_diff_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS2_n(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS2_n(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -126,7 +125,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS1_RS2_n(frequency,:,:)));
 colorbar;
-caxis([-7.6 6.8]);
+caxis([-8.9 6.9]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -141,7 +140,7 @@ tvalues_RS2_RS3_e = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(correlations_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2),correlations_RS3(conditions==78,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(angle_diff_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2),angle_diff_RS3(conditions==78,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS2_RS3_e(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS2_RS3_e(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -165,7 +164,7 @@ for frequency = 1:num_freq
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS2_RS3_e(frequency,:,:)));
 colorbar;
-caxis([-7.6 6.8]);
+caxis([-8.9 6.9]);
 title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
@@ -178,7 +177,7 @@ tvalues_RS2_RS3_n = zeros(43,24,24);
 for frequency = 1:43
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(correlations_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2),correlations_RS3(conditions==69,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(angle_diff_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2),angle_diff_RS3(conditions==69,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS2_RS3_n(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS2_RS3_n(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -192,7 +191,7 @@ subplot(7,7,frequency)
 imagesc(squeeze(pvalues_RS2_RS3_n(frequency,:,:)));
 colorbar;
 caxis([0 .05]);
-title(sprintf('Frequency %.2 Hz',frequency+1));
+title(sprintf('Frequency %.2f Hz',round(frex(frequency),2)));
 end
 
 figure()
@@ -201,6 +200,6 @@ for frequency = 1:43
 subplot(7,7,frequency)
 imagesc(squeeze(tvalues_RS2_RS3_n(frequency,:,:)));
 colorbar;
-caxis([-7.6 6.8]);
-title(sprintf('Frequency %d Hz',frequency+1));
+caxis([-8.9 6.9]);
+title(sprintf('Frequency %.2f Hz', round(frex(frequency),2)));
 end
