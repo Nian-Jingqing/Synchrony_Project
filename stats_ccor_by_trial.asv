@@ -214,15 +214,8 @@ end
 
 %% calculate % of p-values < .05
 
-pvalues_RS1_RS3_ratio = (sum(pvalues_RS1_RS3 < .05, 'all')/(num_freq*24*24)) * 100;
-pvalues_RS1_RS2_e_ratio = (sum(pvalues_RS1_RS2_e < .05, 'all')/(num_freq*24*24)) * 100;
-pvalues_RS1_RS2_n_ratio = (sum(pvalues_RS1_RS2_n < .05, 'all')/(num_freq*24*24)) * 100;
-pvalues_RS2_RS3_e_ratio = (sum(pvalues_RS2_RS3_e < .05, 'all')/(num_freq*24*24)) * 100;
-pvalues_RS2_RS3_n_ratio = (sum(pvalues_RS2_RS3_n < .05, 'all')/(num_freq*24*24)) * 100;
+pvalues_RS1_RS3_ratio = sum(pvalues_RS1_RS3 < .05);
 
-pvalues_RS1_RS3_ratio
-pvalues_RS1_RS2_e_ratio
-pvalues_RS1_RS2_n_ratio
-pvalues_RS2_RS3_e_ratio
-pvalues_RS2_RS3_n_ratio
+
+
 
