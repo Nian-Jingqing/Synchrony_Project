@@ -12,9 +12,9 @@ max_freq = 45; % in HZ
 frex  = logspace(log10(min_freq),log10(max_freq),num_freq);
 
 % load angle difference files
-load('ccor_trials_RS1.mat');
-load('ccor_trials_RS2.mat');
-load('ccor_trials_RS3.mat');
+load('pow_cor_trial_RS1.mat');
+load('pow_cor_trial_RS2.mat');
+load('pow_cor_trial_RS3.mat');
 load('conditions.mat');
 
 % t test between RS1 and RS3
@@ -26,7 +26,7 @@ tvalues_RS1_RS3 = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(ccor_trials_RS1(:,frequency,electrode_sub1,electrode_sub2),ccor_trials_RS3(:,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(pow_cor_trial_RS1(:,frequency,electrode_sub1,electrode_sub2),pow_cor_trial_RS3(:,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -42,7 +42,7 @@ tvalues_RS1_RS2_e = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(ccor_trials_RS1(conditions==69,frequency,electrode_sub1,electrode_sub2),ccor_trials_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(pow_cor_trial_RS1(conditions==69,frequency,electrode_sub1,electrode_sub2),pow_cor_trial_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS2_e(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS2_e(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -58,7 +58,7 @@ tvalues_RS1_RS2_n = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(ccor_trials_RS1(conditions==78,frequency,electrode_sub1,electrode_sub2),ccor_trials_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(pow_cor_trial_RS1(conditions==78,frequency,electrode_sub1,electrode_sub2),pow_cor_trial_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS2_n(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS2_n(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -74,7 +74,7 @@ tvalues_RS2_RS3_e = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(ccor_trials_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2),ccor_trials_RS3(conditions==78,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(pow_cor_trial_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2),pow_cor_trial_RS3(conditions==78,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS2_RS3_e(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS2_RS3_e(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -90,7 +90,7 @@ tvalues_RS2_RS3_n = zeros(43,24,24);
 for frequency = 1:43
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(ccor_trials_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2),ccor_trials_RS3(conditions==69,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(pow_cor_trial_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2),pow_cor_trial_RS3(conditions==69,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS2_RS3_n(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS2_RS3_n(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -214,8 +214,15 @@ end
 
 %% calculate % of p-values < .05
 
-pvalues_RS1_RS3_ratio = sum(pvalues_RS1_RS3 < .05);
+pvalues_RS1_RS3_ratio = (sum(pvalues_RS1_RS3 < .05, 'all')/(num_freq*24*24)) * 100;
+pvalues_RS1_RS2_e_ratio = (sum(pvalues_RS1_RS2_e < .05, 'all')/(num_freq*24*24)) * 100;
+pvalues_RS1_RS2_n_ratio = (sum(pvalues_RS1_RS2_n < .05, 'all')/(num_freq*24*24)) * 100;
+pvalues_RS2_RS3_e_ratio = (sum(pvalues_RS2_RS3_e < .05, 'all')/(num_freq*24*24)) * 100;
+pvalues_RS2_RS3_n_ratio = (sum(pvalues_RS2_RS3_n < .05, 'all')/(num_freq*24*24)) * 100;
 
-
-
+pvalues_RS1_RS3_ratio
+pvalues_RS1_RS2_e_ratio
+pvalues_RS1_RS2_n_ratio
+pvalues_RS2_RS3_e_ratio
+pvalues_RS2_RS3_n_ratio
 
