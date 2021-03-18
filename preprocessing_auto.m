@@ -6,7 +6,7 @@ eeglabpath = fileparts(which('eeglab.m'));
 eeglab;
 
 
-cd D:\Dropbox\Synchrony_Adam\EEG_Data\LSL
+cd D:\Dropbox\Synchrony_Adam\EEG_Data\new_LSL
 list_of_files = dir('**/*.xdf');
 
 % files_info = [];
@@ -90,7 +90,7 @@ for eeg_file = 1:size(list_of_files)
         end
     end
 %load template subject into eeglab template
-eeg_sub1 = pop_loadxdf('SNS_015L_016S_N_NS.xdf');
+eeg_sub1 = pop_loadxdf('SNS_057L_058S_N_NS.xdf');
 
 % exchange data in template with data from xdf file
 eeg_sub1.data = d{1,sub1_field}.time_series;
