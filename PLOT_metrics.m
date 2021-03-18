@@ -2,6 +2,20 @@
 cd D:\Dropbox\Synchrony_Adam
 addpath(genpath('D:\Dropbox\Synchrony_Adam'))
 
+
+% load data/ change for different metrics
+load('angle_diff_by_trial_RS1.mat');
+load('angle_diff_by_trial_RS2.mat');
+load('angle_diff_by_trial_RS3.mat');
+
+tmp = who;
+data_RS1 = eval(cell2mat(tmp(1)));
+data_RS2 = eval(cell2mat(tmp(2)));
+data_RS3 = eval(cell2mat(tmp(3)));
+
+
+load('conditions.mat');
+
 % set colormap to parula
 colormap(parula);
 num_freq = 44;
@@ -11,11 +25,6 @@ max_freq = 45; % in HZ
 
 frex  = logspace(log10(min_freq),log10(max_freq),num_freq);
 
-% load angle difference files
-load('angle_diff_by_trial_RS1.mat');
-load('angle_diff_by_trial_RS2.mat');
-load('angle_diff_by_trial_RS3.mat');
-load('conditions.mat');
 
 % t test between RS1 and RS3
 
@@ -26,7 +35,7 @@ tvalues_RS1_RS3 = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(angle_diff_RS1(:,frequency,electrode_sub1,electrode_sub2),angle_diff_RS3(:,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(data_RS1(:,frequency,electrode_sub1,electrode_sub2),data_RS3(:,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS3(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -42,7 +51,7 @@ tvalues_RS1_RS2_e = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(angle_diff_RS1(conditions==69,frequency,electrode_sub1,electrode_sub2),angle_diff_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(data_RS1(conditions==69,frequency,electrode_sub1,electrode_sub2),data_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS2_e(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS2_e(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -58,7 +67,7 @@ tvalues_RS1_RS2_n = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(angle_diff_RS1(conditions==78,frequency,electrode_sub1,electrode_sub2),angle_diff_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(data_RS1(conditions==78,frequency,electrode_sub1,electrode_sub2),data_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS1_RS2_n(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS1_RS2_n(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -74,7 +83,7 @@ tvalues_RS2_RS3_e = zeros(43,24,24);
 for frequency = 1:num_freq
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(angle_diff_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2),angle_diff_RS3(conditions==78,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(data_RS2(conditions==78,frequency,electrode_sub1,electrode_sub2),data_RS3(conditions==78,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS2_RS3_e(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS2_RS3_e(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -90,7 +99,7 @@ tvalues_RS2_RS3_n = zeros(43,24,24);
 for frequency = 1:43
     for electrode_sub1 = 1:24
         for electrode_sub2 = 1:24
-            [h,p,ci,stats] = ttest(angle_diff_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2),angle_diff_RS3(conditions==69,frequency,electrode_sub1,electrode_sub2));
+            [h,p,ci,stats] = ttest(data_RS2(conditions==69,frequency,electrode_sub1,electrode_sub2),data_RS3(conditions==69,frequency,electrode_sub1,electrode_sub2));
             pvalues_RS2_RS3_n(frequency,electrode_sub1,electrode_sub2) = p;
             tvalues_RS2_RS3_n(frequency,electrode_sub1,electrode_sub2) = stats.tstat;
         end
@@ -225,4 +234,3 @@ pvalues_RS1_RS2_e_ratio
 pvalues_RS1_RS2_n_ratio
 pvalues_RS2_RS3_e_ratio
 pvalues_RS2_RS3_n_ratio
-
