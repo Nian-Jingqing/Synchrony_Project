@@ -5,14 +5,14 @@ eeglabpath = fileparts(which('eeglab.m'));
 % load eeglab
 eeglab;
 
-
-cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed\hyper_cleaned\
+cd D:\Dropbox\Synchrony_Adam\EEG_Data\preprocessed_ready\hyper_cleaned
 list_of_files = dir('**/*ES_sub_1.set');
 
-pairs_A = {'003' '005' '007' '009' '013' '015' '017' '019' '021' '023' '025' '027' '029' '031' '037' '039' '041' '045' '047' '049' '051' '053' '055'};
-pairs_B = {'004' '006' '008' '010' '014' '016' '018' '020' '022' '024' '026' '028' '030' '032' '038' '040' '042' '046' '048' '050' '052' '054' '056'};
 
+pairs_A = {'073' '075' '079' '081' '085'};
+pairs_B = {'074' '076' '080' '082' '086'};
 srate = 500;
+
 % frequency parameters
 min_freq =  2; % in Hz
 max_freq = 45; % in HZ
@@ -32,10 +32,11 @@ time = time - mean(time); % note the alternative method for creating centered ti
 % pvalues_RS2 = zeros(23, num_freq,24,24);
 % pvalues_RS3 = zeros(23, num_freq,24,24);
 
-cd D:\Dropbox\Synchrony_Adam\EEG_Data\TF_out\
+cd D:\Dropbox\Synchrony_Adam\EEG_Data\TF_extracted
+
 
 % for loop
-for pair = 1:23
+for pair = 1:5
 
     eeg_sub_1_RS1 = pop_loadset('filename',sprintf('hyper_cleaned_SNS_%s%s_%s%s_%s_RS1_sub_1.set',cell2mat(pairs_A(pair)),list_of_files(pair).name(22), cell2mat(pairs_B(pair)),list_of_files(pair).name(27),list_of_files(pair).name(29)), 'check', 'off', 'loadmode', 'info');
     eeg_sub_2_RS1 = pop_loadset('filename',sprintf('hyper_cleaned_SNS_%s%s_%s%s_%s_RS1_sub_2.set',cell2mat(pairs_A(pair)),list_of_files(pair).name(22), cell2mat(pairs_B(pair)),list_of_files(pair).name(27),list_of_files(pair).name(29)), 'check', 'off', 'loadmode', 'info');

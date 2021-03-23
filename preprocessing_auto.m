@@ -90,7 +90,7 @@ for eeg_file = 1:size(list_of_files)
         end
     end
 %load template subject into eeglab template
-eeg_sub1 = pop_loadxdf('SNS_057L_058S_N_NS.xdf');
+eeg_sub1 = pop_loadxdf('SNS_085L_086S_N_ES.xdf');
 
 % exchange data in template with data from xdf file
 eeg_sub1.data = d{1,sub1_field}.time_series;
