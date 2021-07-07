@@ -3,10 +3,10 @@ cd D:\Dropbox\Synchrony_Adam
 addpath(genpath('D:\Dropbox\Synchrony_Adam'))
 
 
-% load data/ change for different metrics
-load('angle_diff_by_trial_RS1.mat');
-load('angle_diff_by_trial_RS2.mat');
-load('angle_diff_by_trial_RS3.mat');
+    % load data/ change for different metrics
+    load('angle_diff_by_trial_RS1.mat');
+    load('angle_diff_by_trial_RS2.mat');
+    load('angle_diff_by_trial_RS3.mat');
 
 tmp = who;
 data_RS1 = eval(cell2mat(tmp(1)));

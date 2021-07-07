@@ -6,7 +6,7 @@ eeglabpath = fileparts(which('eeglab.m'));
 eeglab;
 
 
-cd D:\Dropbox\Synchrony_Adam\EEG_Data\new_LSL
+cd D:\Dropbox\Synchrony_Adam\EEG_Data\LSL
 list_of_files = dir('**/*.xdf');
 
 % files_info = [];
