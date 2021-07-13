@@ -72,8 +72,8 @@ list_of_files = dir('**/*.xdf');
 
 for eeg_file = 1:size(list_of_files)
 
-    path_to_file = [list_of_files(eeg_file).folder '\' list_of_files(eeg_file).name];
-    path_new_folder = sprintf('D:\\Dropbox\\Synchrony_Adam\\EEG_Data\\LSL\\%s_MOBI', list_of_files(eeg_file).name);
+    path_to_file = [list_of_files(1).folder '\' list_of_files(3).name];
+    path_new_folder = sprintf('D:\\Dropbox\\Synchrony_Adam\\EEG_Data\\LSL\\%s_MOBI', list_of_files(3).name);
 
     mobilab.allStreams = dataSourceXDF(path_to_file, path_new_folder);
     all_mobilab_streams = [mobilab.allStreams().item];
@@ -84,9 +84,7 @@ for eeg_file = 1:size(list_of_files)
             eeg_streams =  [eeg_streams stream];
         end
     end
-    eeg_streams
     
-end
     exported_EEG = mobilab.allStreams().export2eeglab([1 2]);
     
     eeg_sub1 = 

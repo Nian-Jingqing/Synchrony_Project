@@ -1,0 +1,1 @@
+mobilab.allStreams = dataSourceXDF( list_of_files(1).folder , sprintf('D:\\Dropbox\\Synchrony_Adam\\EEG_Data\\LSL\\%s_MOBI', list_of_files(1).name));
