@@ -84,12 +84,17 @@ for eeg_file = 1:size(list_of_files)
             eeg_streams =  [eeg_streams stream];
         end
     end
-    eeg_streams
+   
     
-end
-    exported_EEG = mobilab.allStreams().export2eeglab([1 2]);
+
+    exported_EEG = mobilab.allStreams().export2eeglab(eeg_streams);
     
-    eeg_sub1 = 
+    eeg_sub1 = pop_select(exported_EEG, 'channel', {exported_EEG.chanlocs(1:24).labels});
+    eeg_sub1.subject = exported_EEG.chanlocs(1).labels(1:20);
+    
+    
+    eeg_sub2 = pop_select(exported_EEG, 'channel', {exported_EEG.chanlocs(25:48).labels});
+    eeg_sub2.subject = exported_EEG.chanlocs(25).labels(1:20);
 
     
     
@@ -130,13 +135,15 @@ end
 
 
 % add events to both datasets (300 events separated by 1 second
+eeg_sub1_chanlocs = eeg_sub1.chanlocs;
 eeg_sub1.data(25,[1000:500:500*300]) = 1; % simulating a stimulus onset every second
 eeg_sub1 = pop_chanevent(eeg_sub1, 25,'edge','leading','edgelen',0,'duration','on','nbtype',1);
-eeg_sub1.chanlocs = eeg_sub2.chanlocs;
+eeg_sub1.chanlocs = eeg_sub1_chanlocs;
 
+eeg_sub2_chanlocs = eeg_sub2.chanlocs;
 eeg_sub2.data(25,[1000:500:500*300]) = 1; % simulating a stimulus onset every second
 eeg_sub2 = pop_chanevent(eeg_sub2, 25,'edge','leading','edgelen',0,'duration','on','nbtype',1);
-eeg_sub2.chanlocs = eeg_sub1.chanlocs;
+eeg_sub2.chanlocs = eeg_sub2_chanlocs;
 
 % parameters
 low_pass = 100;
@@ -153,7 +160,7 @@ for sub = 1:2
         EEG = eeg_sub2;
     end
     %file name
-    EEG.filename = EEG.filename(1:end-4);
+    %EEG.filename = EEG.filename(1:end-4);
     
     % HIGH- AND LOW-PASS FILTERING
     EEG = pop_eegfiltnew(EEG, high_pass, []); % 0.1 is the lower edge
@@ -163,13 +170,23 @@ for sub = 1:2
     d_tmp = nt_zapline(d_tmp, power_line/srate);
     EEG.data = permute(d_tmp,[2,1]);
     
-    EEG = pop_chanedit(EEG, 'lookup',fullfile(eeglabpath,'plugins/dipfit/standard_BESA/standard-10-5-cap385.elp'));
+    EEG.setname = EEG.filepath(40:end);
+    EEG.setname = EEG.setname(1:end-9);
+    
+    
+    %
+    
+    for channel = 1:24
+        tmp = strsplit(EEG.chanlocs(channel).labels,'_');
+        EEG.chanlocs(channel).labels = tmp(end);
+    end
+   
     full_chanlocs = EEG.chanlocs;
     % plot continuous data
     %eegplot(eeg_sub1.data,'srate',eeg_sub1.srate,'eloc_file',eeg_sub1.chanlocs)
     
     % automatic channel rejection
-    [EEG indelec] = pop_rejchan(EEG, 'elec',[1:24] ,'threshold',3,'norm','on','measure','kurt');
+    %[EEG indelec] = pop_rejchan(EEG, 'elec',[1:24] ,'threshold',3,'norm','on','measure','kurt');
     % save labels of removed channels
     
     count = 1;
@@ -195,7 +212,7 @@ for sub = 1:2
     % high pass 2 Hz for data used for ICA calculations
     eeg_tmp = pop_eegfiltnew(EEG, 2, []);   % highpass  2 Hz to not include slow drifts
     % create amica folder
-    cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed_Second
+    cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed_July
     mkdir(sprintf('amica_%s_%d',EEG.filename, sub))
     outDir = what(sprintf('amica_%s_%d',EEG.filename,sub));
     %run ICA
