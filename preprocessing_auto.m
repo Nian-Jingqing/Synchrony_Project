@@ -136,12 +136,14 @@ for eeg_file = 1:size(list_of_files)
 
 % add events to both datasets (300 events separated by 1 second
 eeg_sub1_chanlocs = eeg_sub1.chanlocs;
-eeg_sub1.data(25,[1000:500:500*300]) = 1; % simulating a stimulus onset every second
+
+
+eeg_sub1.data(25,[1000:500:500*floor(size(eeg_sub1.data,2)/500)]) = 1; % simulating a stimulus onset every second
 eeg_sub1 = pop_chanevent(eeg_sub1, 25,'edge','leading','edgelen',0,'duration','on','nbtype',1);
 eeg_sub1.chanlocs = eeg_sub1_chanlocs;
 
 eeg_sub2_chanlocs = eeg_sub2.chanlocs;
-eeg_sub2.data(25,[1000:500:500*300]) = 1; % simulating a stimulus onset every second
+eeg_sub2.data(25,[1000:500:500*floor(size(eeg_sub1.data,2)/500)]) = 1; % simulating a stimulus onset every second
 eeg_sub2 = pop_chanevent(eeg_sub2, 25,'edge','leading','edgelen',0,'duration','on','nbtype',1);
 eeg_sub2.chanlocs = eeg_sub2_chanlocs;
 
@@ -162,11 +164,13 @@ for sub = 1:2
     %file name
     %EEG.filename = EEG.filename(1:end-4);
     
+    
     % HIGH- AND LOW-PASS FILTERING
     EEG = pop_eegfiltnew(EEG, high_pass, []); % 0.1 is the lower edge
     EEG = pop_eegfiltnew(EEG, [], low_pass); % 100 is the upper edge
     % remove line noise with zapline
     d_tmp = permute(EEG.data, [2,1]);
+    d_tmp(isnan(d_tmp))=0;
     d_tmp = nt_zapline(d_tmp, power_line/srate);
     EEG.data = permute(d_tmp,[2,1]);
     
@@ -178,7 +182,7 @@ for sub = 1:2
     
     for channel = 1:24
         tmp = strsplit(EEG.chanlocs(channel).labels,'_');
-        EEG.chanlocs(channel).labels = tmp(end);
+        EEG.chanlocs(channel).labels = char(tmp(end));
     end
    
     full_chanlocs = EEG.chanlocs;
@@ -213,8 +217,8 @@ for sub = 1:2
     eeg_tmp = pop_eegfiltnew(EEG, 2, []);   % highpass  2 Hz to not include slow drifts
     % create amica folder
     cd D:\Dropbox\Synchrony_Adam\EEG_Data\Preprocessed_July
-    mkdir(sprintf('amica_%s_%d',EEG.filename, sub))
-    outDir = what(sprintf('amica_%s_%d',EEG.filename,sub));
+    mkdir(sprintf('ICA_amica_%s_%d',EEG.setname, sub))
+    outDir = what(sprintf('ICA_amica_%s_%d',EEG.setname,sub));
     %run ICA
     dataRank = rank(double(eeg_tmp.data'));
     runamica15(eeg_tmp.data, 'num_chans', eeg_tmp.nbchan,...
@@ -268,8 +272,8 @@ for sub = 1:2
     % interpolate removed channels    
     EEG = pop_interp(EEG, full_chanlocs,'spherical');
     
-    EEG = pop_editset(EEG, 'setname', sprintf('cleaned_%s_sub_%d', EEG.filename, sub));
-    EEG = pop_saveset(EEG, 'filename', sprintf('cleaned_%s_sub_%d', EEG.filename, sub));
+    EEG = pop_editset(EEG, 'setname', sprintf('cleaned_%s_sub_%d', EEG.setname, sub));
+    EEG = pop_saveset(EEG, 'filename', sprintf('cleaned_%s_sub_%d', EEG.setname, sub));
     if sub == 1
         eeg_sub1 = EEG;
     elseif sub == 2
@@ -331,10 +335,10 @@ eeg_sub2.trials =[];
 
 % and line 132 in pop_saveset
 
-eeg_sub1 = pop_editset(eeg_sub1, 'setname', sprintf('hyper_%s', eeg_sub1.filename));
-eeg_sub1 = pop_saveset(eeg_sub1, 'filename', sprintf('hyper_%s', eeg_sub1.filename), 'check', 'off');
-eeg_sub2 = pop_editset(eeg_sub2, 'setname', sprintf('hyper_%s', eeg_sub2.filename));
-eeg_sub2 = pop_saveset(eeg_sub2, 'filename', sprintf('hyper_%s', eeg_sub2.filename), 'check', 'off');
+eeg_sub1 = pop_editset(eeg_sub1, 'setname', sprintf('hyper_%s', eeg_sub1.setname));
+eeg_sub1 = pop_saveset(eeg_sub1, 'filename', sprintf('hyper_%s', eeg_sub1.setname), 'check', 'off');
+eeg_sub2 = pop_editset(eeg_sub2, 'setname', sprintf('hyper_%s', eeg_sub2.setname));
+eeg_sub2 = pop_saveset(eeg_sub2, 'filename', sprintf('hyper_%s', eeg_sub2.setname), 'check', 'off');
 
     
 end
