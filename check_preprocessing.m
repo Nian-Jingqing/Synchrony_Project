@@ -8,4 +8,6 @@ eeglab;
 cd D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\Preprocessed_July\hyper_cleaned
 list_of_files = dir('**/*.set');
 
+for
+
 EEG = pop_loadset('filename', list_of_files(1).name,'check', 'off', 'loadmode', 'info');
