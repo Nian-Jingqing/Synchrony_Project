@@ -29,12 +29,12 @@ list_of_files = dir('**/*.set');
 % how many freqs to analyse
 nfreqs = 45;
 
-
-Power_analysis = struct();
-Power_analysis.subj = [];
-Power_analysis.role = [];
-Power_analysis.cond = [];
-Power_analysis.power = [];
+% create struct and fields
+Power_mat = struct();
+Power_mat.subj = [];
+Power_mat.role = [];
+Power_mat.cond = [];
+Power_mat.power = [];
 
 
 % loop over recordings
@@ -44,14 +44,14 @@ for i = 1:numel(list_of_files)
     
     % get and save subject information
     [subj, role, cond] = subjectinfo(EEG.setname);
-    Power_analysis(i).subj = subj;
-    Power_analysis(i).role = role;
-    Power_analysis(i).cond = cond;
+    Power_mat(i).subj = subj;
+    Power_mat(i).role = role;
+    Power_mat(i).cond = cond;
     
     % calculate power for each channel and frequency
     power = zeros(EEG.nbchan,nfreqs);
     for ch = 1:EEG.nbchan
-        [spectra, freqs] = spectopo(EEG.data(ch,:,:),0,EEG.srate);
+        [spectra, freqs] = spectopo(EEG.data(ch,:,:),0,EEG.srate,'freqrange',[0 nfreqs],'plot','off','verbose','off');
         % only take the specified n freqs
         spectra = spectra(1:nfreqs);
         freqs = freqs(1:nfreqs);
@@ -60,12 +60,45 @@ for i = 1:numel(list_of_files)
     end
     
     % save power/freq matrix in struct
-    Power_analysis(i).power = power;
+    Power_mat(i).power = power;
+    disp(i/numel(list_of_files));
 end
 
 
+%% Plotting over subjects
 
-% figure();
-% imagesc(Power_analysis(4).power);
-% colorbar;
-% title(strcat('Subj-', subj,' Role-', role,' Condition-', cond));
+% list all uniqe subjects
+unique_subj = unique({Power_mat.subj});
+
+% loop over unique subjects
+for subjidx = 1:numel(unique_subj)
+    
+    % set plot dimensions
+    x0=10;
+    y0=500;
+    width=2000;
+    height=250;
+
+    % Collect all matrices belonging to current subj.
+    Current_subj = Power_mat(strcmp({Power_mat.subj}, string(unique_subj(subjidx))));
+    % sort by conditions RS1, NS, RS2, ES, RS3
+    Sorted_subj = [Current_subj(strcmp({Current_subj.cond},'RS1'));...
+       Current_subj(strcmp({Current_subj.cond},'NS'));...
+       Current_subj(strcmp({Current_subj.cond},'RS2'));...
+       Current_subj(strcmp({Current_subj.cond},'ES'));...
+       Current_subj(strcmp({Current_subj.cond},'RS3'))];
+    
+    % plot
+    figure();
+    for i = 1:numel(Sorted_subj)
+        subplot(1,5,i);
+        imagesc(Sorted_subj(i).power);
+        title(strcat('Subj-', Sorted_subj(i).subj,' Role-', Sorted_subj(i).role,' Condition-', Sorted_subj(i).cond));
+        colorbar;
+    end
+    set(gcf,'position',[x0,y0,width,height])
+end
+    
+  
+%% TODO 
+% save plots 
