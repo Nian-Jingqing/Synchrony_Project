@@ -1,4 +1,5 @@
 %% Load data
+% check if my
 if strcmp(getenv('USER'),'til')
     cd /Users/til/Uni/Master/_Ma.Thesis
     addpath(genpath('/Users/til/Uni/Master/_Ma.Thesis'))
@@ -47,30 +48,25 @@ for i = 1:numel(list_of_files)
     Preprocessing_info(i).ch_list = EEG.removed_channels;
 end
 
-% get average of rem. data/ics/channels
+% create csv from struct
+%writetable(struct2table(Preprocessing_info), 'preprocessing_info.csv')
+
 avg_epochs = mean([Preprocessing_info.epochs]);
 avg_ics = mean([Preprocessing_info.ics_removed]);
 avg_ch = mean([Preprocessing_info.ch_removed]);
 
-% add to struct
 Preprocessing_info(end+1) = struct('subject',['avg'],...
     'epochs',[avg_epochs],...
     'ics_removed',[avg_ics],...
     'ch_removed',[avg_ch],...
     'ch_list',[]);
 
-% get std of rem. data/ics/channels
 std_epochs = std([Preprocessing_info.epochs]);
 std_ics = std([Preprocessing_info.ics_removed]);
 std_ch = std([Preprocessing_info.ch_removed]);
 
-% add to struct
 Preprocessing_info(end+1) = struct('subject',['std'],...
     'epochs',[std_epochs],...
     'ics_removed',[std_ics],...
     'ch_removed',[std_ch],...
     'ch_list',[]);
-
-
-% create csv from struct
-writetable(struct2table(Preprocessing_info), 'preprocessing_info.csv')
