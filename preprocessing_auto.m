@@ -70,7 +70,7 @@ list_of_files = dir('**/*.xdf');
 
 
 
-for eeg_file = 1:size(list_of_files)
+for eeg_file = 81:size(list_of_files)
 
     path_to_file = [list_of_files(eeg_file).folder '\' list_of_files(eeg_file).name];
     path_new_folder = sprintf('D:\\Dropbox\\Projects\\Emotional_Sharing_EEG\\EEG_Data\\LSL_September\\%s_MOBI', list_of_files(eeg_file).name);
