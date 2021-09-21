@@ -17,7 +17,7 @@ eeglab; close;
 if strcmp(getenv('USER'),'til')
     cd /Users/til/Uni/Master/_Ma.Thesis/project_data/preprocessed_july/hyper_cleaned
 else
-    cd D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\Preprocessed_July\hyper_cleaned
+    cd D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\Preprocessed_September\hyper_cleaned
     
 end
 
