@@ -1,90 +1,16 @@
-%% creates struct with power(over time) channel-frequency-matrix 
-% for each subject/role/condition
-%% Load data
-% through helper skript
-datacollector;
+%% Load Power matrix of electrodes vs frequencies (45)
 
-%% Poweranalysis  
-
-% how many freqs to analyse
-nfreqs = 45;
-
-% create struct and fields
-Power_mat = struct();
-Power_mat.subj = [];
-Power_mat.role = [];
-Power_mat.cond = [];
-Power_mat.power = [];
+power_analysis_til
 
 
-% loop over recordings
-for i = 1:numel(list_of_files)
-    % load next file
-    EEG = pop_loadset('filename', list_of_files(i).name,'verbose','off');
-    
-    % get and save subject information
-    [subj, role, cond] = subjectinfo(EEG.setname);
-    Power_mat(i).subj = subj;
-    Power_mat(i).role = role;
-    Power_mat(i).cond = cond;
-    
-    % calculate power for each channel and frequency
-    power = zeros(EEG.nbchan,nfreqs);
-    for ch = 1:EEG.nbchan
-        [spectra, freqs] = spectopo(EEG.data(ch,:,:),0,EEG.srate,'freqrange',[0 nfreqs],'plot','off','verbose','off');
-        % only take the specified n freqs
-        spectra = spectra(1:nfreqs);
-        freqs = freqs(1:nfreqs);
-        %save power of each channel
-        power(ch,:) = spectra;
-    end
-    
-    % save power/freq matrix in struct
-    Power_mat(i).power = power;
-    
-    % display progress (0 to 1)
-    disp(i/numel(list_of_files));
-end
 
+%% Plotting avg of subject per role and condition
 
-%% Plotting avg of subjects per role
 % collect all speaker/listener files
 Power_speaker = Power_mat(strcmp({Power_mat.role}, 'S'));
 Power_listener = Power_mat(strcmp({Power_mat.role}, 'L'));
 
-% calculate avg speaker power matrix
-speaker_cat = cat(3,Power_speaker.power);
-speaker_avg = mean(speaker_cat,3);
-% calculate avg listener power matrix
-listener_cat = cat(3,Power_listener.power);
-listener_avg = mean(listener_cat,3);
 
-%calculate colorbar limits
-allavg_cat = cat(1,speaker_avg, listener_avg);
-cmin = min(allavg_cat,[],'all');
-cmax = max(allavg_cat,[],'all');
-clims = [cmin cmax];
-
-% Plotting
-figure();
-
-subplot(1,2,1);
-imagesc(speaker_avg,clims);
-title('Role = speaker');
-xlabel('freq (Hz)');
-ylabel('electrode');
-colorbar;
-
-
-subplot(1,2,2);
-imagesc(listener_avg,clims);
-title('Role = listener');
-xlabel('freq (Hz)');
-ylabel('electrode');
-
-colorbar;
-
-%% Plotting avg of subject per role and condition
 % collect each condition from speaker role
 Speaker_rs1 = Power_speaker(strcmp({Power_speaker.cond}, 'RS1'));
 Speaker_ns = Power_speaker(strcmp({Power_speaker.cond}, 'NS'));
@@ -192,7 +118,4 @@ xlabel('freq (Hz)');
 ylabel('electrode');
 colorbar;
 
-
-
-%%
 
