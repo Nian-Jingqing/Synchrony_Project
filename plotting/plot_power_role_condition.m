@@ -60,62 +60,84 @@ nclims = [ncmin ncmax];
 
 
 figure();
-subplot(2,5,1);
+s1=subplot(2,5,1);
 imagesc(speaker_rs1_avg,nclims);
 title('Condition = RS1');
 xlabel('freq (Hz)');
 ylabel({'Speaker','','','electrode'});
+figsize=get(s1,'position');
+set(s1,'position',figsize);
 
-subplot(2,5,2);
+s2=subplot(2,5,2);
 imagesc(speaker_ns_avg,nclims);
 title('Condition = NS');
 xlabel('freq (Hz)');
 ylabel('electrode');
+figsize=get(s2,'position');
+set(s2,'position',figsize);
 
-subplot(2,5,3);
+s3=subplot(2,5,3);
 imagesc(speaker_rs2_avg,nclims);
 title('Condition = RS2');
 xlabel('freq (Hz)');
 ylabel('electrode');
+figsize=get(s3,'position');
+set(s3,'position',figsize);
 
-subplot(2,5,4);
+s4=subplot(2,5,4);
 imagesc(speaker_es_avg,nclims);
 title('Condition = ES');
 xlabel('freq (Hz)');
 ylabel('electrode');
+figsize=get(s4,'position');
+set(s4,'position',figsize);
 
-subplot(2,5,5);
+s5=subplot(2,5,5);
 imagesc(speaker_rs3_avg,nclims);
 title('Condition = RS3');
 xlabel('freq (Hz)');
 ylabel('electrode');
-colorbar;
+figsize=get(s5,'position');
+
+cb=colorbar('location','eastoutside');
+cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
+set(s5,'position',figsize);
 
 
-subplot(2,5,6);
+s6=subplot(2,5,6);
 imagesc(listener_rs1_avg,nclims);
 xlabel('freq (Hz)');
 ylabel({'Listener','','','electrode'});
+figsize=get(s6,'position');
+set(s6,'position',figsize);
 
-subplot(2,5,7);
+s7=subplot(2,5,7);
 imagesc(listener_ns_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
+figsize=get(s7,'position');
+set(s7,'position',figsize);
 
-subplot(2,5,8);
+s8=subplot(2,5,8);
 imagesc(listener_rs2_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
+figsize=get(s8,'position');
+set(s8,'position',figsize);
 
-subplot(2,5,9);
+s9=subplot(2,5,9);
 imagesc(listener_es_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
+figsize=get(s9,'position');
+set(s9,'position',figsize);
 
-subplot(2,5,10);
+s10=subplot(2,5,10);
 imagesc(listener_rs3_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
-colorbar;
+figsize=get(s10,'position');
 
-
+cb=colorbar('location','eastoutside');
+cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
+set(s10,'position',figsize);

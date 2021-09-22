@@ -22,13 +22,14 @@ clims = [cmin cmax];
 
 % Plotting
 figure();
-
 subplot(1,2,1);
 imagesc(speaker_avg,clims);
 title('Role = speaker');
 xlabel('freq (Hz)');
 ylabel('electrode');
-colorbar;
+
+cb=colorbar;
+cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
 
 
 subplot(1,2,2);
@@ -37,5 +38,6 @@ title('Role = listener');
 xlabel('freq (Hz)');
 ylabel('electrode');
 
-colorbar;
+cb=colorbar;
+cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
 
