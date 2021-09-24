@@ -27,6 +27,8 @@ imagesc(speaker_avg,clims);
 title('Role = speaker');
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 
 cb=colorbar;
 cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
@@ -37,6 +39,8 @@ imagesc(listener_avg,clims);
 title('Role = listener');
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 
 cb=colorbar;
 cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
