@@ -3,7 +3,7 @@
 
 %% Load data
 % through helper skript
-datacollector;
+help_datacollector;
 
 %% Poweranalysis  
 
@@ -24,7 +24,7 @@ for i = 1:numel(list_of_files)
     EEG = pop_loadset('filename', list_of_files(i).name,'verbose','off');
     
     % get and save subject information
-    [subj, role, cond] = subjectinfo(EEG.setname);
+    [subj, role, cond] = help_subjectinfo(EEG.setname);
     Power_mat(i).subj = subj;
     Power_mat(i).role = role;
     Power_mat(i).cond = cond;

@@ -2,7 +2,7 @@
 % Input = EEG.setname
 % Output = subject (char), role (char), condition (char)
 % Example [subj, role, cond] = subjectinfo(EEG.setname);
-function [subj,role,cond] = subjectinfo(setname)
+function [subj,role,cond] = help_subjectinfo(setname)
 
 info = split(setname,{'_',' '});
 
