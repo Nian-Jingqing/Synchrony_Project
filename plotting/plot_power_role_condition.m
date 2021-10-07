@@ -65,6 +65,8 @@ imagesc(speaker_rs1_avg,nclims);
 title('Condition = RS1');
 xlabel('freq (Hz)');
 ylabel({'Speaker','','','electrode'});
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s1,'position');
 set(s1,'position',figsize);
 
@@ -73,6 +75,8 @@ imagesc(speaker_ns_avg,nclims);
 title('Condition = NS');
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s2,'position');
 set(s2,'position',figsize);
 
@@ -81,6 +85,8 @@ imagesc(speaker_rs2_avg,nclims);
 title('Condition = RS2');
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s3,'position');
 set(s3,'position',figsize);
 
@@ -89,6 +95,8 @@ imagesc(speaker_es_avg,nclims);
 title('Condition = ES');
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s4,'position');
 set(s4,'position',figsize);
 
@@ -97,6 +105,8 @@ imagesc(speaker_rs3_avg,nclims);
 title('Condition = RS3');
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s5,'position');
 
 cb=colorbar('location','eastoutside');
@@ -108,6 +118,8 @@ s6=subplot(2,5,6);
 imagesc(listener_rs1_avg,nclims);
 xlabel('freq (Hz)');
 ylabel({'Listener','','','electrode'});
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s6,'position');
 set(s6,'position',figsize);
 
@@ -115,6 +127,8 @@ s7=subplot(2,5,7);
 imagesc(listener_ns_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s7,'position');
 set(s7,'position',figsize);
 
@@ -129,6 +143,8 @@ s9=subplot(2,5,9);
 imagesc(listener_es_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s9,'position');
 set(s9,'position',figsize);
 
@@ -136,6 +152,8 @@ s10=subplot(2,5,10);
 imagesc(listener_rs3_avg,nclims);
 xlabel('freq (Hz)');
 ylabel('electrode');
+yticks(1:EEG.nbchan);
+yticklabels({EEG.chanlocs.labels});
 figsize=get(s10,'position');
 
 cb=colorbar('location','eastoutside');
