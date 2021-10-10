@@ -25,7 +25,7 @@ help_chose_analysisfolder;
 for file = 1:length(list_of_files)
     
     % load next file set
-    EEG = pop_loadset('filename', list_of_files(file).name,'verbose','off');
+    EEG = pop_loadset('filename', list_of_files(file).name);
 
     % it is possible that we have to concatenate epochs for this
     % here is example how
@@ -85,7 +85,7 @@ for file = 1:length(list_of_files)
     % get subjectinfos
     [subj,role,cond] = help_subjectinfo(EEG.setname);
     % save tf of all electrodes
-    filename = sprintf('tf_subject%s_condition%s_role%s.mat',subj,role,cond);
+    filename = sprintf('tf_subject%s_role%s_condition%s.mat',subj,role,cond);
     fullfilename = fullfile(filepath,filename);
     save(fullfilename,'tf_elec','-v7.3'); % v7.3 for larger .m files
     
