@@ -15,7 +15,7 @@ pow_cor_RS3 = zeros(n_pairs,n_frex,n_elex,n_elex);
 %% Load Data
 help_chose_analysisfolder % get filepath
 
-cd filepath; %%TODO 
+cd(filepath); %%TODO 
 
 
 % separate subjects into speaker and listener lists
@@ -74,21 +74,19 @@ for pair = 1:length(pairS)
             for elecS = 1:n_elex
                 % for eaach elec Listener
                 for elecL = 1:n_elex    
+                    
                     % get Data & extract power
                     pow_S = abs(tf_S(elecS,freq,:)).^2;
                     pow_L = abs(tf_L(elecL,freq,:)).^2;
                     
-                    
                     % DO CORRELATION
-                    corrcoef(pow_S,pow_L);
-                    
-                    
-                    
+                    pow_cor_freq(elecS,elecL) = mean(corrcoef(pow_S,pow_L));
                 end 
-                
             end
             pow_cor(freq,:,:) = pow_cor_freq;
         end
+        
+        % fill preinitialized matrizes
         switch condition(cond)
             case 'RS1'
                 pow_cor_RS1(pair,:,:,:) = pow_cor;
