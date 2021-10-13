@@ -32,6 +32,7 @@ for file = 1:length(list_of_files)
     %
     % concanate data
     
+   
 
     samples = size(EEG.data,2)*size(EEG.data,3);
 
@@ -61,7 +62,7 @@ for file = 1:length(list_of_files)
         for f_idx=1:num_freq
 
             csine  = exp(1i*2*pi*frex(f_idx)*time); % complex sine wave
-            gaus_win = exp( -4*log(2)*time.^2 / .3^2 ); % gaussian window
+            gaus_win = exp( -4*log(2)*time.^2 / .3^2 ); % gaussian window - updated from cohen 2019
 
             cmw = csine .* gaus_win; % resulting complex morlet wavelet:
 
