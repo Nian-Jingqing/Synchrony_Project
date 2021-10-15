@@ -65,7 +65,7 @@ pow_cor_RS3 = cell(n_pairs,n_frex,n_elex,n_elex);
 if strcmp(getenv('USER'),'til')
     filepath = '/Volumes/Tils Passport/Uni/MasterthesisData/TF';
 else
-    filepath = '';
+    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF';
 end
 
 cd(filepath);
@@ -101,7 +101,7 @@ for pair = 1:length(pairS)
                     pow_L = abs(tf_L.tf_elec(elecL,freq,:)).^2;
                     
                     % Correlation - spearman since no normal distribution
-                    [p,r]= corr(pow_S,pow_L,'type','spearman');
+                    [p,r]= corr(squeeze(pow_S),squeeze(pow_L),'type','spearman');
                     
                     % store r and p values in cell
                     pow_cor_freq(elecS,elecL) = {[p,r]};
@@ -139,17 +139,17 @@ end
 if strcmp(getenv('USER'),'til')
     filepath = '/Volumes/Tils Passport/Uni/MasterthesisData/pow_corr_single';
 else
-    filepath = '';
+    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\pow_cor_15.10.2021';
 end
 
 cd(filepath);
 addpath(genpath(filepath))
 
 % save all conditions
-save('pow_cor_RS1.mat', 'pow_cor_trial_RS1','-v7.3');
-save('pow_cor_NS.mat', 'pow_cor_trial_NS','-v7.3');
-save('pow_cor_RS2.mat', 'pow_cor_trial_RS2','-v7.3');
-save('pow_cor_ES.mat', 'pow_cor_trial_ES','-v7.3');
-save('pow_cor_RS3.mat', 'pow_cor_trial_RS3','-v7.3');
+save('pow_cor_RS1.mat', 'pow_cor_RS1','-v7.3');
+save('pow_cor_NS.mat', 'pow_cor_NS','-v7.3');
+save('pow_cor_RS2.mat', 'pow_cor_RS2','-v7.3');
+save('pow_cor_ES.mat', 'pow_cor_ES','-v7.3');
+save('pow_cor_RS3.mat', 'pow_cor_RS3','-v7.3');
 
 
