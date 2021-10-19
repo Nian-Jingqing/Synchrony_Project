@@ -1,4 +1,4 @@
-%% Script plots power for each frequency of selected Subject/Condition/electrode
+%% Script plots amplitude for each frequency of selected Subject/Condition/electrode
 
 %% Set up
 % Parameters - chose
@@ -37,9 +37,9 @@ tf_B = load(files{contains(files,subj) & contains(files,condB)});
 dataA = squeeze(tf_A.tf_elec(el_idx,:,:));
 dataB = squeeze(tf_B.tf_elec(el_idx,:,:));
 
-% extract power
-powerA = abs(dataA).^2;
-powerB = abs(dataB).^2;
+% extract Amplitude
+ampA = real(dataA);
+amp = real(dataB);
 
 fprintf('Loading Data - done\n');
 %% Plotting
@@ -50,17 +50,17 @@ xlimits = [0 150000];
 
 % Plot for condition A
 figure();
-sgtitle(sprintf('Power at electrode %s - subject %s during condition %s',electrode,subj,condA));
+sgtitle(sprintf('Amplitude at electrode %s - subject %s during condition %s',electrode,subj,condA));
 % for each frequency
 for freq = 1:size(dataA,1)
-    A_freq = powerA(freq,:);
+    A_freq = ampA(freq,:);
     
     ax(1)= subplot(size(dataA,1),1,freq);
     plot(A_freq);
     xticklabels('off');
     xlim(xlimits)
     if(freq == size(dataA,1)/2)
-        ylabel('Power: \muV^2','fontweight','bold');
+        ylabel('Amplitude[\muV]','fontweight','bold');
     end
 end
 xlabel('Time[s]','fontweight','bold');
@@ -69,17 +69,17 @@ xticklabels(xticks/500);
 
 % Plot for condition B
 figure();
-sgtitle(sprintf('Power at electrode %s - subject %s during condition %s',electrode,subj,condB));
+sgtitle(sprintf('Amplitude at electrode %s - subject %s during condition %s',electrode,subj,condB));
 % for each frequency
 for freq = 1:size(dataA,1)
-    B_freq = powerB(freq,:);
+    B_freq = amp(freq,:);
     
     bx(1)= subplot(size(dataA,1),1,freq);
     plot(B_freq);
     xticklabels('off');
     xlim(xlimits)
     if(freq == size(dataA,1)/2)
-        ylabel('Power: \muV^2','fontweight','bold');
+        ylabel('Amplitude[\muV]','fontweight','bold');
     end
 end
 xlabel('Time[s]','fontweight','bold');
@@ -105,16 +105,16 @@ beta1 = frex(frex >= 18 & frex <= 22);
 beta2 = frex(frex >= 17 & frex <= 30);
 
 % calculate mean power over frequencies included in bands for condition A
-A_theta = mean(powerA(theta(1):theta(end),:),1);
-A_alpha = mean(powerA(alpha(1):alpha(end),:),1);
-A_beta1 = mean(powerA(beta1(1):beta1(end),:),1);
-A_beta2 = mean(powerA(beta2(1):beta2(end),:),1);
+A_theta = mean(ampA(theta(1):theta(end),:),1);
+A_alpha = mean(ampA(alpha(1):alpha(end),:),1);
+A_beta1 = mean(ampA(beta1(1):beta1(end),:),1);
+A_beta2 = mean(ampA(beta2(1):beta2(end),:),1);
 
 % calculate mean power over frequencies included in bands for condition B
-B_theta = mean(powerB(theta(1):theta(end),:),1);
-B_alpha = mean(powerB(alpha(1):alpha(end),:),1);
-B_beta1 = mean(powerB(beta1(1):beta1(end),:),1);
-B_beta2 = mean(powerB(beta2(1):beta2(end),:),1);
+B_theta = mean(amp(theta(1):theta(end),:),1);
+B_alpha = mean(amp(alpha(1):alpha(end),:),1);
+B_beta1 = mean(amp(beta1(1):beta1(end),:),1);
+B_beta2 = mean(amp(beta2(1):beta2(end),:),1);
 
 % get global ylimits
 ylimitsA = ceil(max(cat(2,A_theta,A_alpha,A_beta1,A_beta2)));
@@ -124,7 +124,7 @@ ylimits = [0 max(ylimitsA,ylimitsB)];
 %% Plot Condition A
 
 figure()
-sgtitle(sprintf('Power at electrode %s - subject %s during condition %s',electrode,subj,condA),'fontweight','bold');
+sgtitle(sprintf('Amplitude at electrode %s - subject %s during condition %s',electrode,subj,condA),'fontweight','bold');
 
 % conditionA theta band
 subplot(4,1,1);
@@ -133,7 +133,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Theta Band (%iHz - %iHz)',theta(1),theta(end)));
 
@@ -145,7 +145,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Alpha Band (%iHz - %iHz)',alpha(1),alpha(end)));
 
@@ -157,7 +157,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Beta Band (%iHz - %iHz)',beta1(1),beta1(end)));
 
@@ -169,14 +169,14 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Beta Band (%iHz - %iHz)',beta2(1),beta2(end)));
 
 %% Plot Condition B
 
 figure()
-sgtitle(sprintf('Power at electrode %s - subject %s during condition %s',electrode,subj,condB),'fontweight','bold');
+sgtitle(sprintf('Amplitude at electrode %s - subject %s during condition %s',electrode,subj,condB),'fontweight','bold');
 
 % conditionA theta band
 subplot(4,1,1);
@@ -185,7 +185,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Theta Band (%iHz - %iHz)',theta(1),theta(end)));
 
@@ -197,7 +197,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Alpha Band (%iHz - %iHz)',alpha(1),alpha(end)));
 
@@ -209,7 +209,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Beta Band (%iHz - %iHz)',beta1(1),beta1(end)));
 
@@ -221,7 +221,7 @@ xticklabels('off');
 xlim(xlimits)
 ylim(ylimits)
 xlabel('Time[s]');
-ylabel('Power: \muV^2');
+ylabel('Amplitude[\muV]');
 xticklabels(xticks/500);
 title(sprintf('Beta Band (%iHz - %iHz)',beta2(1),beta2(end)));
 
