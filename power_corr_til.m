@@ -101,7 +101,7 @@ for pair = 1:length(pairS)
                     pow_L = abs(tf_L.tf_elec(elecL,freq,:)).^2;
                     
                     % Correlation - spearman since no normal distribution
-                    [p,r]= corr(pow_S,pow_L,'type','spearman');
+                    [p,r]= corr(squeeze(pow_S),squeeze(pow_L),'type','spearman');
                     
                     % store r and p values in cell
                     pow_cor_freq(elecS,elecL) = {[p,r]};
@@ -146,10 +146,10 @@ cd(filepath);
 addpath(genpath(filepath))
 
 % save all conditions
-save('pow_cor_RS1.mat', 'pow_cor_trial_RS1','-v7.3');
-save('pow_cor_NS.mat', 'pow_cor_trial_NS','-v7.3');
-save('pow_cor_RS2.mat', 'pow_cor_trial_RS2','-v7.3');
-save('pow_cor_ES.mat', 'pow_cor_trial_ES','-v7.3');
-save('pow_cor_RS3.mat', 'pow_cor_trial_RS3','-v7.3');
+save('pow_cor_RS1.mat', 'pow_cor_RS1','-v7.3');
+save('pow_cor_NS.mat', 'pow_cor_NS','-v7.3');
+save('pow_cor_RS2.mat', 'pow_cor_RS2','-v7.3');
+save('pow_cor_ES.mat', 'pow_cor_ES','-v7.3');
+save('pow_cor_RS3.mat', 'pow_cor_RS3','-v7.3');
 
 
