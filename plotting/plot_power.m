@@ -132,7 +132,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('ThetaBand (%iHz - %iHz)',theta(1),theta(end)));
+title(sprintf('Theta Band (%iHz - %iHz)',theta(1),theta(end)));
 
 
 % conditionA - alpha band
@@ -144,7 +144,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('AlphaPower (%iHz - %iHz)',alpha(1),alpha(end)));
+title(sprintf('Alpha Band (%iHz - %iHz)',alpha(1),alpha(end)));
 
 
 % conditionA - beta1 band
@@ -156,7 +156,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('BetaPower (%iHz - %iHz)',beta1(1),beta1(end)));
+title(sprintf('Beta Band (%iHz - %iHz)',beta1(1),beta1(end)));
 
 
 % conditionA - beta2 band
@@ -168,7 +168,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('BetaPower (%iHz - %iHz)',beta2(1),beta2(end)));
+title(sprintf('Beta Band (%iHz - %iHz)',beta2(1),beta2(end)));
 
 %% Plot Condition B
 
@@ -184,7 +184,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('ThetaBand (%iHz - %iHz)',theta(1),theta(end)));
+title(sprintf('Theta Band (%iHz - %iHz)',theta(1),theta(end)));
 
 
 % conditionA - alpha band
@@ -196,7 +196,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('AlphaPower (%iHz - %iHz)',alpha(1),alpha(end)));
+title(sprintf('Alpha Band (%iHz - %iHz)',alpha(1),alpha(end)));
 
 
 % conditionA - beta1 band
@@ -208,7 +208,7 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('BetaPower (%iHz - %iHz)',beta1(1),beta1(end)));
+title(sprintf('Beta Band (%iHz - %iHz)',beta1(1),beta1(end)));
 
 
 % conditionA - beta2 band
@@ -220,6 +220,6 @@ ylim(ylimits)
 xlabel('Time[s]');
 ylabel('Power: \muV^2');
 xticklabels(xticks/500);
-title(sprintf('BetaPower (%iHz - %iHz)',beta2(1),beta2(end)));
+title(sprintf('Beta Band (%iHz - %iHz)',beta2(1),beta2(end)));
 
 fprintf('Plot frequency bands - done\n');
