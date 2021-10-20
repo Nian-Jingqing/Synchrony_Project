@@ -1,6 +1,7 @@
 %% Script plots power for each frequency of selected Subject/Condition/electrode
 
 %% Set up
+fprintf('Setup');
 % Parameters - chose
 subj = '085';
 
@@ -23,8 +24,9 @@ end
 cd(filepath);
 addpath(genpath(filepath));
 
-fprintf('Setup - done\n');
+fprintf(' - done\n');
 %% load Data
+fprintf('Loading Data');
 % get all filenames
 list = dir;
 files = {list.name};
@@ -41,9 +43,9 @@ dataB = squeeze(tf_B.tf_elec(el_idx,:,:));
 powerA = abs(dataA).^2;
 powerB = abs(dataB).^2;
 
-fprintf('Loading Data - done\n');
+fprintf(' - done\n');
 %% Plotting
-
+fprintf('Plot each frequency');
 % portray maximum 300seconds at sr=500Hz
 xlimits = [0 150000];
 
@@ -86,8 +88,9 @@ xlabel('Time[s]','fontweight','bold');
 xticklabels(xticks/500);
 
 
-fprintf('Plot each frequency - done\n');
+fprintf(' - done\n');
 %% Preparation for frequency bands
+fprintf('Plot frequency bands');
 % theta 4-7Hz
 % alpha 8-12Hz
 % beta1 18-22Hz
@@ -225,4 +228,4 @@ ylabel('Power: \muV^2');
 xticklabels(xticks/500);
 title(sprintf('Beta Band (%iHz - %iHz)',beta2(1),beta2(end)));
 
-fprintf('Plot frequency bands - done\n');
+fprintf(' - done\n');
