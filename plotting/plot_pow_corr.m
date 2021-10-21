@@ -1,4 +1,6 @@
 %% Script plots power correlations for each subject/condition/frequency
+% section 2 - saves plot of all subjects in folder (line 56)
+% section 3 - plots all conditions for chosen pair
 
 %% Load Data
 fprintf('Loading files');
@@ -29,56 +31,203 @@ data_es = data_es.pow_cor_ES;
 data_rs3 = data_rs3.pow_cor_RS3;
 
 fprintf(' - done \n');
-%% Test for one pair
+fprintf('extract p and r');
 
-% Input:
-pair = 1;
-condition = 'RS1';
-
-switch condition
-    case 'RS1'
-        data = data_rs1;
-    case 'NS'
-        data = data_ns;
-    case 'RS2'
-        data = data_rs2;
-    case 'ES'
-        data = data_es;
-    case 'RS3'
-        data = data_rs3;
-end
-
-% extract r&p
+% extract p and r values
 % first entry is r, second p (power_corr_til.m)
-r_values = cellfun(@(v)v(1),data);
-p_values = cellfun(@(v)v(2),data);
+r_rs1 = cellfun(@(e)e(1),data_rs1);
+p_rs1 = cellfun(@(e)e(2),data_rs1);
 
-% calculate colorbarlimits for this pair
-colormin = min(squeeze(r_values(pair,:)));
-colormax = max(squeeze(r_values(pair,:)));
-clims = [colormin colormax];
+r_ns = cellfun(@(e)e(1),data_ns);
+p_ns = cellfun(@(e)e(2),data_ns);
+
+r_rs2 = cellfun(@(e)e(1),data_rs2);
+p_rs2 = cellfun(@(e)e(2),data_rs2);
+
+r_es = cellfun(@(e)e(1),data_es);
+p_es = cellfun(@(e)e(2),data_es);
+
+r_rs3 = cellfun(@(e)e(1),data_rs3);
+p_rs3 = cellfun(@(e)e(2),data_rs3);
 
 
+fprintf(' - done \n');
 
-figure();
-sgtitle(sprintf('Power Correlation of Pair %i during condition %s',pair,condition));
-for freq = 1:44
-    matrix = squeeze(r_values(pair,freq,:,:));
-    subplot(8,6,freq)
-    imagesc(matrix,clims);
-    title(sprintf('%iHz',freq));
-    xlabel('Listener');
-    ylabel(sprintf('Speaker'));
 
-    colorbar;
+%% loop over all subjects - save in folder
+
+% loop over subjects
+for pair = 1:37
+    tic
+    fprintf('plotting pair %i of 37',pair)
+    
+    % Resting state 1
+    condition = 'RS1';
+    r_vals = r_rs1;
+    clims = colorlimits(r_vals,pair);
+    plot_r_vals(pair,condition,r_vals,clims);
+    save_correlationfigure(pair,condition);
+    close;
+    
+
+    % Neutral sharing
+    condition = 'NS';
+    r_vals = r_ns;
+    clims = colorlimits(r_vals,pair);
+    plot_r_vals(pair,condition,r_vals,clims)
+    save_correlationfigure(pair,condition);
+    close;
+
+
+    % Resting state 2
+    condition = 'RS2';
+    r_vals = r_rs2;
+    clims = colorlimits(r_vals,pair);
+    plot_r_vals(pair,condition,r_vals,clims)
+    save_correlationfigure(pair,condition);
+    close;
+
+
+    % Emotional sharing
+    condition = 'ES';
+    r_vals = r_es;
+    clims = colorlimits(r_vals,pair);
+    plot_r_vals(pair,condition,r_vals,clims)
+    save_correlationfigure(pair,condition);
+    close;
+
+
+    % Resting state 3
+    condition = 'RS3';
+    r_vals = r_rs3;
+    clims = colorlimits(r_vals,pair);
+    plot_r_vals(pair,condition,r_vals,clims)
+    save_correlationfigure(pair,condition);
+    close;
+    
+
+    fprintf(' - done \n'); toc
 end
 
-%% imagesc testing:
 
-A = zeros(3,5);
 
-for i = 1:3
-    for j = 1:5
-        A(i,j) = rand;
+%% Plot for one pair (chose)
+
+% Input: (pair 1-37)
+pair = 1;
+
+
+% Resting state 1
+condition = 'RS1';
+r_vals = r_rs1;
+clims = colorlimits(r_vals,pair);
+plot_r_vals(pair,condition,r_vals,clims)
+
+% Neutral sharing
+condition = 'NS';
+r_vals = r_ns;
+clims = colorlimits(r_vals,pair);
+plot_r_vals(pair,condition,r_vals,clims)
+
+
+% Resting state 2
+condition = 'RS2';
+r_vals = r_rs2;
+clims = colorlimits(r_vals,pair);
+plot_r_vals(pair,condition,r_vals,clims)
+
+
+% Emotional sharing
+condition = 'ES';
+r_vals = r_es;
+clims = colorlimits(r_vals,pair);
+plot_r_vals(pair,condition,r_vals,clims)
+
+
+% Resting state 3
+condition = 'RS3';
+r_vals = r_rs3;
+clims = colorlimits(r_vals,pair);
+plot_r_vals(pair,condition,r_vals,clims)
+
+
+
+%% print channames on x and y axes
+printchannames
+
+
+
+
+%% Helper functions
+
+% plots r_values for each frequency as
+% imagesc for electrode matrix
+function plot_r_vals(pair,condition,r_vals,clims)
+    figure();
+    sgtitle(sprintf('Power Correlation of Pair %i during condition %s',pair,condition));
+    for freq = 1:44
+        matrix = squeeze(r_vals(pair,freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        %imagesc(matrix,clims) 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+end
+
+
+function save_correlationfigure(pair,condition)
+% chose folder location for saving
+if strcmp(getenv('USER'),'til')
+    supfolder = '/Volumes/til_uni/Uni/Plots/power_correlation';  
+    filepath = sprintf('%s/pair_%i',supfolder,pair);
+    if ~exist(filepath, 'dir')
+        mkdir(filepath);
+    end
+else
+    supfolder = '';  
+    filepath = sprintf('%s/pair_%i',supfolder,pair);
+    if ~exist(filepath, 'dir')
+        mkdir(filepath);
+    end
+end
+addpath(genpath(supfolder))
+% navigate to folder
+cd(filepath);
+
+% save current figure as .fig
+filename = sprintf('pow_corr_pair%i_cond%s',pair,condition);
+savefig(filename)
+
+% can be loaded with loadfig(filename)
+
+end
+
+
+% calculate colorbarlimits for given pair and r_values (condition)
+function clims =  colorlimits(r_vals, pair)
+
+    colormin = min(squeeze(r_vals(pair,:)));
+    colormax = max(squeeze(r_vals(pair,:)));
+    % returns
+    clims = [colormin colormax];
+
+end
+
+
+% print channel names
+function printchannames
+    % get channames
+    load('chanlocs.mat');
+    chanlocs = {chanlocs.labels};
+
+    for idx = 1:length(chanlocs)
+        fprintf('%s\n',chanlocs{idx});
+    end
+    fprintf('   ');
+    for idx = 1:length(chanlocs)
+        fprintf('%s ',chanlocs{idx});
     end
 end
