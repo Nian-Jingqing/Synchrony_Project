@@ -63,10 +63,8 @@ fprintf(' - done \n');
 %% Plot for one pair (chose)
 
 if(~loop)
-
     % Input: (pair 1-37)
     pair = 1;
-
 
     % Resting state 1
     condition = 'RS1';
@@ -80,20 +78,17 @@ if(~loop)
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
 
-
     % Resting state 2
     condition = 'RS2';
     r_vals = r_rs2;
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
 
-
     % Emotional sharing
     condition = 'ES';
     r_vals = r_es;
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
-
 
     % Resting state 3
     condition = 'RS3';
@@ -106,7 +101,6 @@ end
 %% loop over all subjects - save in folder
 
 if(loop)
-
     % loop over subjects
     for pair = 1:37
         tic
