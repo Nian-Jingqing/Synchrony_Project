@@ -1,6 +1,13 @@
 %% Script plots power correlations for each subject/condition/frequency
-% section 2 - saves plot of all subjects in folder (line 56)
-% section 3 - plots all conditions for chosen pair
+% section 2 - plots all conditions for chosen pair
+% section 3 - saves plot of all subjects in folder (line 56)
+
+
+
+% chose if you want to loop over all subjects.
+% else script will only plot all conditions for chosen subject
+loop = false;
+
 
 %% Load Data
 fprintf('Loading files');
@@ -53,30 +60,25 @@ p_rs3 = cellfun(@(e)e(2),data_rs3);
 
 fprintf(' - done \n');
 
+%% Plot for one pair (chose)
 
-%% loop over all subjects - save in folder
+if(~loop)
 
-% loop over subjects
-for pair = 1:37
-    tic
-    fprintf('plotting pair %i of 37',pair)
-    
+    % Input: (pair 1-37)
+    pair = 1;
+
+
     % Resting state 1
     condition = 'RS1';
     r_vals = r_rs1;
     clims = colorlimits(r_vals,pair);
-    plot_r_vals(pair,condition,r_vals,clims);
-    save_correlationfigure(pair,condition);
-    close;
-    
+    plot_r_vals(pair,condition,r_vals,clims)
 
     % Neutral sharing
     condition = 'NS';
     r_vals = r_ns;
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
-    save_correlationfigure(pair,condition);
-    close;
 
 
     % Resting state 2
@@ -84,8 +86,6 @@ for pair = 1:37
     r_vals = r_rs2;
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
-    save_correlationfigure(pair,condition);
-    close;
 
 
     % Emotional sharing
@@ -93,8 +93,6 @@ for pair = 1:37
     r_vals = r_es;
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
-    save_correlationfigure(pair,condition);
-    close;
 
 
     % Resting state 3
@@ -102,59 +100,70 @@ for pair = 1:37
     r_vals = r_rs3;
     clims = colorlimits(r_vals,pair);
     plot_r_vals(pair,condition,r_vals,clims)
-    save_correlationfigure(pair,condition);
-    close;
-    
-
-    fprintf(' - done \n'); toc
 end
 
 
+%% loop over all subjects - save in folder
 
-%% Plot for one pair (chose)
+if(loop)
 
-% Input: (pair 1-37)
-pair = 1;
+    % loop over subjects
+    for pair = 1:37
+        tic
+        fprintf('plotting pair %i of 37',pair)
 
-
-% Resting state 1
-condition = 'RS1';
-r_vals = r_rs1;
-clims = colorlimits(r_vals,pair);
-plot_r_vals(pair,condition,r_vals,clims)
-
-% Neutral sharing
-condition = 'NS';
-r_vals = r_ns;
-clims = colorlimits(r_vals,pair);
-plot_r_vals(pair,condition,r_vals,clims)
+        % Resting state 1
+        condition = 'RS1';
+        r_vals = r_rs1;
+        clims = colorlimits(r_vals,pair);
+        plot_r_vals(pair,condition,r_vals,clims);
+        save_correlationfigure(pair,condition);
+        close;
 
 
-% Resting state 2
-condition = 'RS2';
-r_vals = r_rs2;
-clims = colorlimits(r_vals,pair);
-plot_r_vals(pair,condition,r_vals,clims)
+        % Neutral sharing
+        condition = 'NS';
+        r_vals = r_ns;
+        clims = colorlimits(r_vals,pair);
+        plot_r_vals(pair,condition,r_vals,clims)
+        save_correlationfigure(pair,condition);
+        close;
 
 
-% Emotional sharing
-condition = 'ES';
-r_vals = r_es;
-clims = colorlimits(r_vals,pair);
-plot_r_vals(pair,condition,r_vals,clims)
+        % Resting state 2
+        condition = 'RS2';
+        r_vals = r_rs2;
+        clims = colorlimits(r_vals,pair);
+        plot_r_vals(pair,condition,r_vals,clims)
+        save_correlationfigure(pair,condition);
+        close;
 
 
-% Resting state 3
-condition = 'RS3';
-r_vals = r_rs3;
-clims = colorlimits(r_vals,pair);
-plot_r_vals(pair,condition,r_vals,clims)
+        % Emotional sharing
+        condition = 'ES';
+        r_vals = r_es;
+        clims = colorlimits(r_vals,pair);
+        plot_r_vals(pair,condition,r_vals,clims)
+        save_correlationfigure(pair,condition);
+        close;
 
+
+        % Resting state 3
+        condition = 'RS3';
+        r_vals = r_rs3;
+        clims = colorlimits(r_vals,pair);
+        plot_r_vals(pair,condition,r_vals,clims)
+        save_correlationfigure(pair,condition);
+        close;
+
+
+        fprintf(' - done \n'); toc
+    end
+end
 
 
 %% print channames on x and y axes
 printchannames
-
 
 
 
