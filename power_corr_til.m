@@ -101,10 +101,14 @@ for pair = 1:length(pairS)
                     pow_L = abs(tf_L.tf_elec(elecL,freq,:)).^2;
                     
                     % Correlation - spearman since no normal distribution
+<<<<<<< HEAD
                     [p,r]= corr(squeeze(pow_S),squeeze(pow_L),'type','spearman');
+=======
+                    [r,p]= corr(squeeze(pow_S),squeeze(pow_L),'type','spearman');
+>>>>>>> tf
                     
                     % store r and p values in cell
-                    pow_cor_freq(elecS,elecL) = {[p,r]};
+                    pow_cor_freq(elecS,elecL) = {[r,p]};
                     
                 end 
             end
