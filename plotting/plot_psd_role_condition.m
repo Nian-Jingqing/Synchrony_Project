@@ -1,6 +1,6 @@
 %% Load Power matrix of electrodes vs frequencies (45)
 
-power_analysis_til
+psd_analysis_til
 
 
 
