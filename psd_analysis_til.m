@@ -1,4 +1,4 @@
-%% creates struct with power(over time) channel-frequency-matrix 
+%% creates struct with power-spectral-density(over time) channel-frequency-matrix 
 % for each subject/role/condition
 
 %% Load data
