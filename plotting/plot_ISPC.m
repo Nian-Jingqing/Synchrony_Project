@@ -1,12 +1,15 @@
 %% Script plots ISPC values for each subject/condition/frequency
 % section 2 - plots all conditions for chosen pair
 % section 3 - saves plot of all subjects in folder (line 56)
+% section 4 - plots all conditions averaged over pairs
 
 
 
-% chose if you want to loop over all subjects.
-% else script will only plot all conditions for chosen subject
-loop = false;
+% chose which parts to execute
+plot_all_pairs = false;
+plot_selected_pair = false;
+plot_average_pairs = true;
+
 
 
 %% Load Data
@@ -41,7 +44,7 @@ fprintf(' - done \n');
 
 %% Plot for one pair (chose)
 
-if(~loop)
+if(plot_selected_pair)
     % Input: (pair 1-37)
     pair = 1;
 
@@ -79,7 +82,7 @@ end
 
 %% loop over all subjects - save in folder
 
-if(loop)
+if(plot_all_pairs)
     % loop over subjects
     for pair = 1:37
         tic
@@ -133,7 +136,94 @@ if(loop)
         fprintf(' - done \n'); toc
     end
 end
-
+%% average ISPC over pairs:
+if(plot_average_pairs)
+    
+    % RS1
+    condition = 'RS1';
+    % avg over pairs
+    data = squeeze(mean(ispc_rs1,1));
+    
+    figure();
+    sgtitle(sprintf('Average ISPC (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(data(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % NS
+    condition = 'NS';
+    % avg over pairs
+    data = squeeze(mean(ispc_ns,1));
+    
+    figure();
+    sgtitle(sprintf('Average ISPC (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(data(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % RS2
+    condition = 'RS2';
+    % avg over pairs
+    data = squeeze(mean(ispc_rs2,1));
+    
+    figure();
+    sgtitle(sprintf('Average ISPC (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(data(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % ES
+    condition = 'ES';
+    % avg over pairs
+    data = squeeze(mean(ispc_es,1));
+    
+    figure();
+    sgtitle(sprintf('Average ISPC (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(data(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % RS3
+    condition = 'RS3';
+    % avg over pairs
+    data = squeeze(mean(ispc_rs3,1));
+    
+    figure();
+    sgtitle(sprintf('Average ISPC (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(data(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+end
 
 %% print channames on x and y axes
 printchannames

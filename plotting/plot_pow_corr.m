@@ -1,11 +1,10 @@
 %% Script plots power correlations for each subject/condition/frequency
 % section 2 - plots all conditions for chosen pair
 % section 3 - saves plot of all subjects in folder (line 56)
+% section 4 - plots all conditions averaged over pairs
 
 
-
-% chose if you want to loop over all subjects.
-% else script will only plot all conditions for chosen subject
+% chose which parts to execute
 plot_all_pairs = false;
 plot_selected_pair = false;
 plot_average_pairs = true;
