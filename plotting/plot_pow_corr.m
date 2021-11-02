@@ -6,7 +6,11 @@
 
 % chose if you want to loop over all subjects.
 % else script will only plot all conditions for chosen subject
-loop = false;
+plot_all_pairs = false;
+plot_selected_pair = false;
+plot_average_pairs = true;
+statistics = true;
+
 
 
 %% Load Data
@@ -62,7 +66,7 @@ fprintf(' - done \n');
 
 %% Plot for one pair (chose)
 
-if(~loop)
+if(plot_selected_pair)
     % Input: (pair 1-37)
     pair = 1;
 
@@ -100,7 +104,7 @@ end
 
 %% loop over all subjects - save in folder
 
-if(loop)
+if(plot_all_pairs)
     % loop over subjects
     for pair = 1:37
         tic
@@ -154,7 +158,122 @@ if(loop)
         fprintf(' - done \n'); toc
     end
 end
+%% average power correlation over pairs:
+if(plot_average_pairs)
+    
+    % RS1
+    condition = 'RS1';
+    % avg over pairs
+    r_vals = squeeze(mean(r_rs1,1));
+    
+    figure();
+    sgtitle(sprintf('Average Power Correlation (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(r_vals(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % NS
+    condition = 'NS';
+    % avg over pairs
+    r_vals = squeeze(mean(r_ns,1));
+    
+    figure();
+    sgtitle(sprintf('Average Power Correlation (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(r_vals(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % RS2
+    condition = 'RS2';
+    % avg over pairs
+    r_vals = squeeze(mean(r_rs2,1));
+    
+    figure();
+    sgtitle(sprintf('Average Power Correlation (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(r_vals(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % ES
+    condition = 'ES';
+    % avg over pairs
+    r_vals = squeeze(mean(r_es,1));
+    
+    figure();
+    sgtitle(sprintf('Average Power Correlation (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(r_vals(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+    
+    % RS3
+    condition = 'RS3';
+    % avg over pairs
+    r_vals = squeeze(mean(r_rs3,1));
+    
+    figure();
+    sgtitle(sprintf('Average Power Correlation (37 pairs) during condition %s',condition));
+    for freq = 1:44
+        matrix = squeeze(r_vals(freq,:,:));
+        subplot(8,6,freq)
+        imagesc(matrix); 
+        title(sprintf('%iHz',freq));
+        xlabel('Listener');
+        ylabel(sprintf('Speaker'));
+        colorbar;
+    end
+end
+%% Statistics:
+if(statistics)
+    % # of p-vals < 0.05
+    threshold = 0.05;
+    number_of_comparisons = 37*44*24*24;
 
+    sum_of_rs1 = sum(p_rs1(:) < threshold);
+    sum_of_ns  = sum(p_ns(:)  < threshold);
+    sum_of_rs2 = sum(p_rs2(:) < threshold);
+    sum_of_es  = sum(p_es(:)  < threshold);
+    sum_of_rs3 = sum(p_rs3(:) < threshold);
+
+    total_sum = sum_of_rs1 +...
+                sum_of_ns + ...
+                sum_of_rs2 +...
+                sum_of_es + ...
+                sum_of_rs3;
+
+    ratio = total_sum/(number_of_comparisons*5);
+    ratio = round(ratio,4)*100;
+
+    fprintf(' RS1: %i of %i comparisons are significant\n ',sum_of_rs1,number_of_comparisons)
+    fprintf(' NS: %i of %i comparisons are significant\n ',sum_of_ns,number_of_comparisons)
+    fprintf('RS2: %i of %i comparisons are significant\n ',sum_of_rs2,number_of_comparisons)
+    fprintf(' ES: %i of %i comparisons are significant\n ',sum_of_es,number_of_comparisons)
+    fprintf('RS2: %i of %i comparisons are significant\n ',sum_of_rs3,number_of_comparisons)
+    fprintf('In Total: %i of %i comparisons are significant (%.2f%%)\n ',total_sum,number_of_comparisons*5,ratio)
+end
 
 %% print channames on x and y axes
 printchannames
