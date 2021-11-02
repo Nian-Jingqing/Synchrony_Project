@@ -61,11 +61,11 @@ conditions = {'RS1' 'NS' 'RS2' 'ES' 'RS3'};
 
 %% Initialize matrizes
 
-ISPC_RS1 = cell(n_pairs,n_frex,n_elex,n_elex);
-ISPC_NS  = cell(n_pairs,n_frex,n_elex,n_elex);
-ISPC_RS2 = cell(n_pairs,n_frex,n_elex,n_elex);
-ISPC_ES  = cell(n_pairs,n_frex,n_elex,n_elex);
-ISPC_RS3 = cell(n_pairs,n_frex,n_elex,n_elex);
+ISPC_RS1 = zeros(n_pairs,n_frex,n_elex,n_elex);
+ISPC_NS  = zeros(n_pairs,n_frex,n_elex,n_elex);
+ISPC_RS2 = zeros(n_pairs,n_frex,n_elex,n_elex);
+ISPC_ES  = zeros(n_pairs,n_frex,n_elex,n_elex);
+ISPC_RS3 = zeros(n_pairs,n_frex,n_elex,n_elex);
 
 fprintf(' - done\n');
 %% Calculate ISPC
@@ -89,7 +89,7 @@ for pair = 1:length(pairS)
     for cond = 1:length(conditions)
         fprintf('Condition %s',conditions{cond});
         % matrix to be filled
-        ISPC = cell(n_frex,n_elex,n_elex);
+        ISPC = zeros(n_frex,n_elex,n_elex);
         
         % load current condition for each subject of current pair
         tf_S = load(sprintf('tf_subject%s_roleS_condition%s.mat',pairS{pair},conditions{cond}));
@@ -99,7 +99,7 @@ for pair = 1:length(pairS)
         for freq = 1:n_frex
             
             % matrix to be filled
-            ISPC_freq = cell(n_elex,n_elex);
+            ISPC_freq = zeros(n_elex,n_elex);
             
             % for each elec Speaker
             for elecS = 1:n_elex
@@ -107,8 +107,8 @@ for pair = 1:length(pairS)
                 for elecL = 1:n_elex    
                     
                     % get Data & extract phase_angles
-                    phase_angle_S = angle(tf_S.tf_elec(elecS,freq,:));
-                    phase_angle_L = angle(tf_L.tf_elec(elecL,freq,:));
+                    phase_angle_S = squeeze(angle(tf_S.tf_elec(elecS,freq,:)));
+                    phase_angle_L = squeeze(angle(tf_L.tf_elec(elecL,freq,:)));
                     
                     % Get Difference (order is irrelevant)
                     diffs = phase_angle_S - phase_angle_L;
@@ -120,8 +120,8 @@ for pair = 1:length(pairS)
                     ISPC_value = abs(mean_diff);
                     
                     
-                    % store p-a-d in cell
-                    ISPC_freq(elecS,elecL) = {ISPC_value};
+                    % store p-a-d
+                    ISPC_freq(elecS,elecL) = ISPC_value;
                     
                 end 
             end
