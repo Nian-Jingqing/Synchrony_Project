@@ -11,8 +11,8 @@
 fprintf('Setup');
 
 n_pairs = length(pairS);
-n_frex = 44;
-n_elex = 24;
+n_freqs = 44;
+n_elecs = 24;
 
 conditions = {'RS1' 'NS' 'RS2' 'ES' 'RS3'};
 
@@ -21,9 +21,9 @@ window_duration = 1; %seconds
 window_intervall = 0.050; %seconds
 sampling_rate = 500;
 
-window_size = window_duration*sampling_rate;
-% amount by which window moves
-stride = sampling_rate * window_intervall;
+% resulting in: 
+window_size = window_duration*sampling_rate; % length of window in timesteps
+stride = sampling_rate * window_intervall; % amount by which window moves
 
 fprintf(' - done\n');
 
@@ -60,22 +60,22 @@ for pair = 1:length(pairS)
         % prepare cell
         % calculate number of power_correlations taken to set up cell
         timepoints = size(tf_S.tf_elec,3); % check recording length of files
-        steps = ceil((timepoints - window_size) / stride) + 1;
+        steps = floor((timepoints - window_size) / stride) + 1;
         
         % create cell from string
-        sliding_pow_cor = cell(n_frex,n_elex,n_elex,steps);
+        sliding_pow_cor = cell(n_freqs,n_elecs,n_elecs,steps);
         
         
         % for each freq
-        for freq = 1:n_frex
+        for freq = 1:n_freqs
             
             % matrix to be filled
-            sliding_pow_cor_freq = cell(n_elex,n_elex,steps);
+            sliding_pow_cor_freq = cell(n_elecs,n_elecs,steps);
             
             % for each elec Speaker
-            for elecS = 1:n_elex
+            for elecS = 1:n_elecs
                 % for eaach elec Listener
-                for elecL = 1:n_elex    
+                for elecL = 1:n_elecs    
                     
                     % get Data & extract power
                     pow_S = squeeze(abs(tf_S.tf_elec(elecS,freq,:)).^2);

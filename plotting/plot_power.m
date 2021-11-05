@@ -94,7 +94,7 @@ fprintf('Plot frequency bands');
 % theta 4-7Hz
 % alpha 8-12Hz
 % beta1 18-22Hz
-% beta1 17-30Hz
+% beta2 16-30Hz
 
 % frequencies (from tf_til.m)
 min_freq =  2; % in Hz
@@ -105,7 +105,7 @@ frex = linspace(min_freq,max_freq,num_freq);
 theta = frex(frex >=  4 & frex <=  7);
 alpha = frex(frex >=  8 & frex <= 12);
 beta1 = frex(frex >= 18 & frex <= 22);
-beta2 = frex(frex >= 17 & frex <= 30);
+beta2 = frex(frex >= 16 & frex <= 30);
 
 % calculate mean power over frequencies included in bands for condition A
 A_theta = mean(powerA(theta(1):theta(end),:),1);
