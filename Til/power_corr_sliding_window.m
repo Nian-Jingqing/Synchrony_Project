@@ -7,6 +7,7 @@
 %% Set Parameters
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
+clearvars -except pairS pairL
 
 fprintf('Setup');
 
@@ -27,7 +28,8 @@ stride = sampling_rate * window_intervall; % amount by which window moves
 
 fprintf(' - done\n');
 
-%% Sliding Power Correlation
+
+%% navigate to folder
 
 % check system to get correct filepath
 if strcmp(getenv('USER'),'til')
@@ -39,14 +41,17 @@ end
 cd(filepath);
 addpath(genpath(filepath))
 
+
+%% Sliding Power Correlation
+
+
 % Loopchain: pair - condition - frex - elex
-% for each pair
 for pair = 1:length(pairS)
     tic
     fprintf('pair %d of %d:\n',pair,length(pairS));
 
 
-    % for each condition
+    
     for cond = 1:length(conditions)
         
         fprintf('Condition %s',conditions{cond});
@@ -66,13 +71,13 @@ for pair = 1:length(pairS)
         sliding_pow_cor = cell(n_freqs,n_elecs,n_elecs,steps);
         
         
-        % for each freq
+        
         for freq = 1:n_freqs
             
             % matrix to be filled
             sliding_pow_cor_freq = cell(n_elecs,n_elecs,steps);
             
-            % for each elec Speaker
+            
             for elecS = 1:n_elecs
                 % for eaach elec Listener
                 for elecL = 1:n_elecs    

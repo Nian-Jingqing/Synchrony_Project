@@ -4,6 +4,8 @@ fprintf('Setup');
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
 
+clearvars -except pairS pairL
+
 n_pairs = length(pairS);
 n_frex = 44;
 n_elex = 24;
@@ -22,7 +24,7 @@ fprintf(' - done\n');
 
 % check system to get correct filepath
 if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/Tils Passport/Uni/MasterthesisData/TF';
+    filepath = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 else
     filepath = '';
 end
