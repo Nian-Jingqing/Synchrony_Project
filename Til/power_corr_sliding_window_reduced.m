@@ -74,13 +74,14 @@ for pair = 1:length(pairS)
         tf_L = load(sprintf('tf_subject%s_roleL_condition%s.mat',pairL{pair},conditions{cond}));
         fprintf(' - loaded');
         
-        % prepare cell
-        % calculate number of power_correlations taken to set up cell
+        % prepare array
+        % calculate number of power_correlations taken to set up array
         timepoints = size(tf_S.tf_elec,3); % check recording length of files
         steps = floor((timepoints - window_size) / stride) + 1;
         
-        % create cell
-        sliding_pow_corr = cell(length(freq_bands),n_elecs,steps);
+        % create array
+        sliding_pow_corr_r = zeros(length(freq_bands),n_elecs,steps);
+        sliding_pow_corr_p = zeros(length(freq_bands),n_elecs,steps);
         
         for band = 1:length(freq_bands)
             
@@ -92,8 +93,10 @@ for pair = 1:length(pairS)
             avg_pow_S = squeeze(mean(pow_S,2));
             avg_pow_L = squeeze(mean(pow_L,2));
             
-            % create cell for each band
-            sliding_pow_corr_band = cell(n_elecs,steps);
+            % create array for each band
+            sliding_pow_corr_band_r = zeros(n_elecs,steps);
+            sliding_pow_corr_band_p = zeros(n_elecs,steps);
+
             for elec = 1:n_elecs
                 
                 % correlate Speaker and Listener using sliding window
@@ -101,17 +104,25 @@ for pair = 1:length(pairS)
                 L = avg_pow_L(elec,:);
                 [r,p] = sliding_correlation(window_size,stride,steps,S,L);
                 
-                % store r and p values in cell
-                sliding_pow_corr_band(elec,:) = {[r,p]};
+                % store r and p values in array
+                sliding_pow_corr_band_r(elec,:) = r;
+                sliding_pow_corr_band_p(elec,:) = p;
+
+
                 
             end % electrode loop
-            sliding_pow_corr(band,:,:) = sliding_pow_corr_band;
+            sliding_pow_corr_r(band,:,:) = sliding_pow_corr_band_r;
+            sliding_pow_corr_p(band,:,:) = sliding_pow_corr_band_p;
+            
+            
         end % frequency band loop
         
         % save current condition
-        % rename cell - include condition name
-        assignin('base', sprintf('sliding_pow_corr_%s',conditions{cond}),...
-                sliding_pow_corr)
+        % rename array - include condition name
+        assignin('base', sprintf('sliding_pow_corr_r_%s',conditions{cond}),...
+                sliding_pow_corr_r)
+        assignin('base', sprintf('sliding_pow_corr_p_%s',conditions{cond}),...
+            sliding_pow_corr_p)
 
     	fprintf(' - done\n');
         
@@ -136,11 +147,18 @@ for pair = 1:length(pairS)
     addpath(genpath(filepath))
 
     % save all conditions for current pair
-    save(sprintf('sliding_pow_corr_RS1_pair%i.mat',pair), 'sliding_pow_corr_RS1','-v7.3');
-    save(sprintf('sliding_pow_corr_NS_pair%i.mat', pair),  'sliding_pow_corr_NS','-v7.3');
-    save(sprintf('sliding_pow_corr_RS2_pair%i.mat',pair), 'sliding_pow_corr_RS2','-v7.3');
-    save(sprintf('sliding_pow_corr_ES_pair%i.mat', pair),  'sliding_pow_corr_ES','-v7.3');
-    save(sprintf('sliding_pow_corr_RS3_pair%i.mat',pair), 'sliding_pow_corr_RS3','-v7.3');
+    save(sprintf('sliding_pow_corr_r_RS1_pair%i.mat',pair), 'sliding_pow_corr_r_RS1','-v7.3');
+    save(sprintf('sliding_pow_corr_r_NS_pair%i.mat', pair),  'sliding_pow_corr_r_NS','-v7.3');
+    save(sprintf('sliding_pow_corr_r_RS2_pair%i.mat',pair), 'sliding_pow_corr_r_RS2','-v7.3');
+    save(sprintf('sliding_pow_corr_r_ES_pair%i.mat', pair),  'sliding_pow_corr_r_ES','-v7.3');
+    save(sprintf('sliding_pow_corr_r_RS3_pair%i.mat',pair), 'sliding_pow_corr_r_RS3','-v7.3');
+    
+    % save all conditions for current pair
+    save(sprintf('sliding_pow_corr_p_RS1_pair%i.mat',pair), 'sliding_pow_corr_p_RS1','-v7.3');
+    save(sprintf('sliding_pow_corr_p_NS_pair%i.mat', pair),  'sliding_pow_corr_p_NS','-v7.3');
+    save(sprintf('sliding_pow_corr_p_RS2_pair%i.mat',pair), 'sliding_pow_corr_p_RS2','-v7.3');
+    save(sprintf('sliding_pow_corr_p_ES_pair%i.mat', pair),  'sliding_pow_corr_p_ES','-v7.3');
+    save(sprintf('sliding_pow_corr_p_RS3_pair%i.mat',pair), 'sliding_pow_corr_p_RS3','-v7.3');
     
     fprintf(' - done\n'); 
     fprintf('Pair %d of %d done',pair,length(pairS));
@@ -149,6 +167,8 @@ for pair = 1:length(pairS)
 end % pair loop
 
 
+%%
+[r,p] = sliding_correlation(window_size,stride,steps,S,L);
 %% Helperfunctions
 
 % move a window over two datasets 
@@ -166,8 +186,8 @@ function [r,p] = sliding_correlation(window_size, stride, steps, dataA, dataB)
     end
     
     % setup matrices for r and p values
-    r = double(length(steps));
-    p = double(length(steps));
+    r = zeros(length(steps));
+    p = zeros(length(steps));
     % start index counter
     idx = 0;
     
