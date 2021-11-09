@@ -88,6 +88,10 @@ for eeg_file = 81:size(list_of_files)
     
 
     exported_EEG = mobilab.allStreams().export2eeglab(eeg_streams);
+    exported_EEG.data(:, any(isnan(exported_EEG.data),1)) = [];
+    exported_EEG.pnts = size(exported_EEG.data,2);
+    exported_EEG.times = exported_EEG.times(1:size(exported_EEG.data,2));
+    
     
     eeg_sub1 = pop_select(exported_EEG, 'channel', {exported_EEG.chanlocs(1:24).labels});
     eeg_sub1.subject = exported_EEG.chanlocs(1).labels(1:20);
