@@ -159,3 +159,44 @@ figsize=get(s10,'position');
 cb=colorbar('location','eastoutside');
 cb.Label.String = 'Log Power Spectral Density 10*log_{10}(\muV^{2}/Hz)';
 set(s10,'position',figsize);
+
+
+
+%% plot bands with topo
+
+NS = (speaker_ns_avg + listener_ns_avg)/2;
+ES = (speaker_es_avg + listener_es_avg)/2;
+
+S = (speaker_ns_avg + speaker_es_avg)/2;
+L = (listener_ns_avg + listener_es_avg)/2;
+
+NS_theta = mean(NS(:,4:8),2);
+NS_alpha = mean(NS(:,9:13),2);
+NS_beta1 = mean(NS(:,19:23),2);
+NS_beta2 = mean(NS(:,15:31),2);
+
+ES_theta = mean(ES(:,4:8),2);
+ES_alpha = mean(ES(:,9:13),2);
+ES_beta1 = mean(ES(:,19:23),2);
+ES_beta2 = mean(ES(:,15:31),2);
+
+S_theta = mean(S(:,4:8),2);
+S_alpha = mean(S(:,9:13),2);
+S_beta1 = mean(S(:,19:23),2);
+S_beta2 = mean(S(:,15:31),2);
+
+L_theta = mean(L(:,4:8),2);
+L_alpha = mean(L(:,9:13),2);
+L_beta1 = mean(L(:,19:23),2);
+L_beta2 = mean(L(:,15:31),2);
+
+
+figure(4)
+subplot(2,1,1)
+topoplotIndie(NS_beta2(:,1),EEG.chanlocs)
+colorbar
+subplot(2,1,2)
+topoplotIndie(ES_beta2(:,1),EEG.chanlocs)
+colorbar
+
+
