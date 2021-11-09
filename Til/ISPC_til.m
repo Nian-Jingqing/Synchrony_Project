@@ -28,7 +28,7 @@ fprintf(' - done\n');
 if strcmp(getenv('USER'),'til')
     filepath = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 else
-    filepath = '';
+    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF';
 end
 
 cd(filepath);
@@ -111,7 +111,7 @@ fprintf('Saving');
 if strcmp(getenv('USER'),'til')
     filepath = '/Volumes/til_uni/Uni/MasterthesisData/ISPC_single';
 else
-    filepath = '';
+    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\ISPC';
 end
 
 cd(filepath);
