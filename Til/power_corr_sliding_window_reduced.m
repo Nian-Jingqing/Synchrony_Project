@@ -53,7 +53,7 @@ fprintf('Setup - done\n');
 if strcmp(getenv('USER'),'til')
     filepath = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 else
-    filepath = '';
+    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF';
 end
 
 cd(filepath);
@@ -137,7 +137,7 @@ for pair = 1:length(pairS)
             mkdir(filepath);
         end
     else
-        filepath = '';
+        filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\sliding';
         if ~exist(filepath, 'dir')
             mkdir(filepath);
         end
