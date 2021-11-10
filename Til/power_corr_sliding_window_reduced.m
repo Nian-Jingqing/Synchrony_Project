@@ -9,11 +9,16 @@
     % - BetaB 16-30Hz
 
 
-%% Setup
+%% Parameters
+
+% set filepath for loading and saving
+filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
+filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/sliding_pow_corr_reduced';
+
 
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
-clearvars -except pairS pairL
+clearvars -except pairS pairL filepath_loading filepath_saving
 
 
 n_pairs = length(pairS);
@@ -27,7 +32,7 @@ max_freq = 45; % in HZ
 num_freq = 44; % in count
 freqs = linspace(min_freq,max_freq,num_freq);
 
-
+% construct frequency bands
 freq_band_names = {'theta' 'alpha' 'beta1' 'beta2'};
 theta = freqs(freqs >=  4 & freqs <=  7);
 alpha = freqs(freqs >=  8 & freqs <= 12);
@@ -93,7 +98,7 @@ for pair = 1:length(pairS)
             avg_pow_S = squeeze(mean(pow_S,2));
             avg_pow_L = squeeze(mean(pow_L,2));
             
-            % create array for each band
+            % create arrays for bands
             sliding_pow_corr_band_r = zeros(n_elecs,steps);
             sliding_pow_corr_band_p = zeros(n_elecs,steps);
 
@@ -117,58 +122,29 @@ for pair = 1:length(pairS)
             
         end % frequency band loop
         
-        % save current condition
-        % rename array - include condition name
-        assignin('base', sprintf('sliding_pow_corr_r_%s',conditions{cond}),...
-                sliding_pow_corr_r)
-        assignin('base', sprintf('sliding_pow_corr_p_%s',conditions{cond}),...
-            sliding_pow_corr_p)
-
-    	fprintf(' - done\n');
+        % save current condition in respective subfolder
+        change_dir(filepath_saving,pair,'p');
+        save(sprintf('sliding_pow_corr_p_pair%i_%s.mat',pair,conditions{cond}),...
+            'sliding_pow_corr_p','-v7.3');
+ 
+        change_dir(filepath_saving,pair,'r');
+        save(sprintf('sliding_pow_corr_r_pair%i_%s.mat',pair,conditions{cond}),...
+            'sliding_pow_corr_r','-v7.3');
+        
+     	fprintf(' - done\n');
         
     end % condition loop
     
-    fprintf('Saving');
-
-    % check system to get correct filepath
-    if strcmp(getenv('USER'),'til')
-        filepath = sprintf('/Volumes/til_uni/Uni/MasterthesisData/sliding_pow_corr_reduced/Pair%i',pair);
-        if ~exist(filepath, 'dir')
-            mkdir(filepath);
-        end
-    else
-        filepath = '';
-        if ~exist(filepath, 'dir')
-            mkdir(filepath);
-        end
-    end
-
-    cd(filepath);
-    addpath(genpath(filepath))
-
-    % save all conditions for current pair
-    save(sprintf('sliding_pow_corr_r_RS1_pair%i.mat',pair), 'sliding_pow_corr_r_RS1','-v7.3');
-    save(sprintf('sliding_pow_corr_r_NS_pair%i.mat', pair),  'sliding_pow_corr_r_NS','-v7.3');
-    save(sprintf('sliding_pow_corr_r_RS2_pair%i.mat',pair), 'sliding_pow_corr_r_RS2','-v7.3');
-    save(sprintf('sliding_pow_corr_r_ES_pair%i.mat', pair),  'sliding_pow_corr_r_ES','-v7.3');
-    save(sprintf('sliding_pow_corr_r_RS3_pair%i.mat',pair), 'sliding_pow_corr_r_RS3','-v7.3');
-    
-    % save all conditions for current pair
-    save(sprintf('sliding_pow_corr_p_RS1_pair%i.mat',pair), 'sliding_pow_corr_p_RS1','-v7.3');
-    save(sprintf('sliding_pow_corr_p_NS_pair%i.mat', pair),  'sliding_pow_corr_p_NS','-v7.3');
-    save(sprintf('sliding_pow_corr_p_RS2_pair%i.mat',pair), 'sliding_pow_corr_p_RS2','-v7.3');
-    save(sprintf('sliding_pow_corr_p_ES_pair%i.mat', pair),  'sliding_pow_corr_p_ES','-v7.3');
-    save(sprintf('sliding_pow_corr_p_RS3_pair%i.mat',pair), 'sliding_pow_corr_p_RS3','-v7.3');
-    
-    fprintf(' - done\n'); 
     fprintf('Pair %d of %d done',pair,length(pairS));
+    
     toc
     
 end % pair loop
 
 
-%%
-[r,p] = sliding_correlation(window_size,stride,steps,S,L);
+
+
+
 %% Helperfunctions
 
 % move a window over two datasets 
@@ -186,8 +162,8 @@ function [r,p] = sliding_correlation(window_size, stride, steps, dataA, dataB)
     end
     
     % setup matrices for r and p values
-    r = zeros(length(steps));
-    p = zeros(length(steps));
+    r = zeros(1,steps);
+    p = zeros(1,steps);
     % start index counter
     idx = 0;
     
@@ -200,7 +176,9 @@ function [r,p] = sliding_correlation(window_size, stride, steps, dataA, dataB)
         window_L =  dataB(slider_pos-(window_size-1):slider_pos);
         
         % correlate windows from both datasets
-        [r(idx), p(idx)] = corr(window_S,window_L,'type','spearman');
+        [rval, pval] = corr(window_S,window_L,'type','spearman');
+        r(idx) = rval;
+        p(idx) = pval;
     end
     
 end
@@ -261,4 +239,14 @@ end
 
 
 
+% moves to specific subfolder 
+function change_dir(filepath_saving,pair,value)
 
+    filepath = sprintf('%s/%s_values/Pair%i',filepath_saving,value,pair);
+    if ~exist(filepath, 'dir')
+        mkdir(filepath);
+    end
+    cd(filepath);
+    addpath(genpath(filepath))
+    
+end
