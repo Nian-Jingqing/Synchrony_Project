@@ -3,6 +3,10 @@
 % section 3 - saves plot of all subjects in folder (line 56)
 % section 4 - plots all conditions averaged over pairs
 
+% set filepath for loading and saving
+filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/pow_corr';
+filepath_saving = '/Volumes/til_uni/Uni/Plots/power_correlation';
+
 
 % chose which parts to execute
 plot_all_pairs = false;
@@ -14,14 +18,10 @@ statistics = true;
 
 %% Load Data
 fprintf('Loading files');
-% check system to get correct filepath
-if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/til_uni/Uni/MasterthesisData/pow_corr';
-else
-    filepath = '';
-end
-cd(filepath);
-addpath(genpath(filepath))
+
+% navigate to folder
+cd(filepath_loading);
+addpath(genpath(filepath_loading))
 
 
 % load data
@@ -114,7 +114,7 @@ if(plot_all_pairs)
         r_vals = r_rs1;
         clims = colorlimits(r_vals,pair);
         plot_r_vals(pair,condition,r_vals,clims);
-        save_correlationfigure(pair,condition);
+        save_correlationfigure(pair,condition,filepath_saving);
         close;
 
 
@@ -123,7 +123,7 @@ if(plot_all_pairs)
         r_vals = r_ns;
         clims = colorlimits(r_vals,pair);
         plot_r_vals(pair,condition,r_vals,clims)
-        save_correlationfigure(pair,condition);
+        save_correlationfigure(pair,condition,filepath_saving);
         close;
 
 
@@ -132,7 +132,7 @@ if(plot_all_pairs)
         r_vals = r_rs2;
         clims = colorlimits(r_vals,pair);
         plot_r_vals(pair,condition,r_vals,clims)
-        save_correlationfigure(pair,condition);
+        save_correlationfigure(pair,condition,filepath_saving);
         close;
 
 
@@ -141,7 +141,7 @@ if(plot_all_pairs)
         r_vals = r_es;
         clims = colorlimits(r_vals,pair);
         plot_r_vals(pair,condition,r_vals,clims)
-        save_correlationfigure(pair,condition);
+        save_correlationfigure(pair,condition,filepath_saving);
         close;
 
 
@@ -150,7 +150,7 @@ if(plot_all_pairs)
         r_vals = r_rs3;
         clims = colorlimits(r_vals,pair);
         plot_r_vals(pair,condition,r_vals,clims)
-        save_correlationfigure(pair,condition);
+        save_correlationfigure(pair,condition,filepath_saving);
         close;
 
 
@@ -299,29 +299,21 @@ function plot_r_vals(pair,condition,r_vals,clims)
 end
 
 
-function save_correlationfigure(pair,condition)
+function save_correlationfigure(pair,condition,filepath_saving)
+
+addpath(genpath(filepath_loading))
 % chose folder location for saving
-if strcmp(getenv('USER'),'til')
-    supfolder = '/Volumes/til_uni/Uni/Plots/power_correlation';  
-    filepath = sprintf('%s/pair_%i',supfolder,pair);
-    if ~exist(filepath, 'dir')
-        mkdir(filepath);
-    end
-else
-    supfolder = '';  
-    filepath = sprintf('%s/pair_%i',supfolder,pair);
-    if ~exist(filepath, 'dir')
-        mkdir(filepath);
-    end
+filepath = sprintf('%s/pair_%i',filepath_saving,pair);
+if ~exist(filepath, 'dir')
+    mkdir(filepath);
 end
-addpath(genpath(supfolder))
+
 % navigate to folder
 cd(filepath);
 
 % save current figure as .fig
 filename = sprintf('pow_corr_pair%i_cond%s',pair,condition);
 savefig(filename)
-
 % can be loaded with loadfig(filename)
 
 end

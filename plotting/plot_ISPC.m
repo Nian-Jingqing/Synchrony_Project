@@ -3,7 +3,9 @@
 % section 3 - saves plot of all subjects in folder (line 56)
 % section 4 - plots all conditions averaged over pairs
 
-
+% set filepath for loading and saving
+filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/pow_corr';
+filepath_saving = '/Volumes/til_uni/Uni/Plots/power_correlation';
 
 % chose which parts to execute
 plot_all_pairs = false;
@@ -14,14 +16,9 @@ plot_average_pairs = true;
 
 %% Load Data
 fprintf('Loading files');
-% check system to get correct filepath
-if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/til_uni/Uni/MasterthesisData/ISPC_single';
-else
-    filepath = '';
-end
-cd(filepath);
-addpath(genpath(filepath))
+
+cd(filepath_loading);
+addpath(genpath(filepath_loading))
 
 
 % load data 
@@ -93,7 +90,7 @@ if(plot_all_pairs)
         data = ispc_rs1;
         clims = colorlimits(data,pair);
         plot_ispcs(pair,condition,data,clims);
-        save_correlationfigure(pair,condition);
+        save_figure(pair,condition,filepath_saving);
         close;
 
 
@@ -102,7 +99,7 @@ if(plot_all_pairs)
         data = ispc_ns;
         clims = colorlimits(data,pair);
         plot_ispcs(pair,condition,data,clims)
-        save_correlationfigure(pair,condition);
+        save_figure(pair,condition,filepath_saving);
         close;
 
 
@@ -111,7 +108,7 @@ if(plot_all_pairs)
         data = ispc_rs2;
         clims = colorlimits(data,pair);
         plot_ispcs(pair,condition,data,clims)
-        save_correlationfigure(pair,condition);
+        save_figure(pair,condition,filepath_saving);
         close;
 
 
@@ -120,7 +117,7 @@ if(plot_all_pairs)
         data = ispc_es;
         clims = colorlimits(data,pair);
         plot_ispcs(pair,condition,data,clims)
-        save_correlationfigure(pair,condition);
+        save_figure(pair,condition,filepath_saving);
         close;
 
 
@@ -129,7 +126,7 @@ if(plot_all_pairs)
         data = ispc_rs3;
         clims = colorlimits(data,pair);
         plot_ispcs(pair,condition,data,clims)
-        save_correlationfigure(pair,condition);
+        save_figure(pair,condition,filepath_saving);
         close;
 
 
@@ -250,22 +247,15 @@ function plot_ispcs(pair,condition,ispc,clims)
 end
 
 
-function save_correlationfigure(pair,condition)
+function save_figure(pair,condition,filepath_saving)
+
+addpath(genpath(filepath_loading))
 % chose folder location for saving
-if strcmp(getenv('USER'),'til')
-    supfolder = '/Volumes/til_uni/Uni/Plots/ISPC';  
-    filepath = sprintf('%s/pair_%i',supfolder,pair);
-    if ~exist(filepath, 'dir')
-        mkdir(filepath);
-    end
-else
-    supfolder = '';  
-    filepath = sprintf('%s/pair_%i',supfolder,pair);
-    if ~exist(filepath, 'dir')
-        mkdir(filepath);
-    end
+filepath = sprintf('%s/pair_%i',filepath_saving,pair);
+if ~exist(filepath, 'dir')
+    mkdir(filepath);
 end
-addpath(genpath(supfolder))
+
 % navigate to folder
 cd(filepath);
 
