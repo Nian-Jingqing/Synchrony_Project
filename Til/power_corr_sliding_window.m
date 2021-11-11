@@ -4,10 +4,18 @@
 % between each electrode pair
 % at a sliding time window
 
-%% Set Parameters
+
+%% Parameters
+
+% set filepath for loading and saving
+filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
+filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/sliding_pow_corr';
+
+
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
-clearvars -except pairS pairL
+clearvars -except pairS pairL filepath_loading filepath_saving
+
 
 fprintf('Setup');
 
@@ -31,15 +39,8 @@ fprintf(' - done\n');
 
 %% navigate to folder
 
-% check system to get correct filepath
-if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/til_uni/Uni/MasterthesisData/TF';
-else
-    filepath = '';
-end
-
-cd(filepath);
-addpath(genpath(filepath))
+cd(filepath_loading);
+addpath(genpath(filepath_loading))
 
 
 %% Sliding Power Correlation
@@ -49,8 +50,6 @@ addpath(genpath(filepath))
 for pair = 1:length(pairS)
     tic
     fprintf('pair %d of %d:\n',pair,length(pairS));
-
-
     
     for cond = 1:length(conditions)
         
@@ -61,25 +60,27 @@ for pair = 1:length(pairS)
         tf_L = load(sprintf('tf_subject%s_roleL_condition%s.mat',pairL{pair},conditions{cond}));
         fprintf(' - loaded');
         
-        
-        % prepare cell
-        % calculate number of power_correlations taken to set up cell
+        % prepare array
+        % calculate number of power_correlations taken to set up array
         timepoints = size(tf_S.tf_elec,3); % check recording length of files
         steps = floor((timepoints - window_size) / stride) + 1;
         
-        % create cell from string
-        sliding_pow_cor = cell(n_freqs,n_elecs,n_elecs,steps);
-        
+        % create array from string
+        sliding_pow_corr_p = zeros(n_freqs,n_elecs,n_elecs,steps);
+        sliding_pow_corr_r = zeros(n_freqs,n_elecs,n_elecs,steps);
         
         
         for freq = 1:n_freqs
             
+            fprintf('%i',freq);
             % matrix to be filled
-            sliding_pow_cor_freq = cell(n_elecs,n_elecs,steps);
+            sliding_pow_corr_freq_p = zeros(n_elecs,n_elecs,steps);
+            sliding_pow_corr_freq_r = zeros(n_elecs,n_elecs,steps);
             
             
             for elecS = 1:n_elecs
-                % for eaach elec Listener
+                % for each elec Listener
+                
                 for elecL = 1:n_elecs    
                     
                     % get Data & extract power
@@ -87,59 +88,40 @@ for pair = 1:length(pairS)
                     pow_L = squeeze(abs(tf_L.tf_elec(elecL,freq,:)).^2);
                     
                     % Correlation - spearman since no normal distribution
-                    [r,p] = sliding_correlation(window_size,stride,pow_S,pow_L);
+                    [r,p] = sliding_correlation(window_size,stride,steps,pow_S,pow_L);
                     
-                    % store r and p values in cell
-                    sliding_pow_cor_freq(elecS,elecL,:) = {[r,p]};
+                    % store r and p values in array
+                    sliding_pow_corr_freq_p(elecS,elecL,:) = p;
+                    sliding_pow_corr_freq_r(elecS,elecL,:) = r;
                     
                 end 
             end % electrode loops
             
             % save current frequency
-            sliding_pow_cor(freq,:,:,:) = sliding_pow_cor_freq;
+            sliding_pow_corr_p(freq,:,:,:) = sliding_pow_corr_freq_p;
+            sliding_pow_corr_r(freq,:,:,:) = sliding_pow_corr_freq_r;
             
         end % frequency loop
         
-        % save current condition
-        % rename cell - include condition name
-        assignin('base', sprintf('sliding_pow_cor_%s',conditions{cond}),...
-                sliding_pow_corr)
-
-    	fprintf(' - done\n');
+        
+        % save current condition in respective subfolder
+        change_dir(filepath_saving,pair,'p');
+        save(sprintf('sliding_pow_corr_p_pair%i_%s.mat',pair,conditions{cond}),...
+            'sliding_pow_corr_p','-v7.3');
+ 
+        change_dir(filepath_saving,pair,'r');
+        save(sprintf('sliding_pow_corr_r_pair%i_%s.mat',pair,conditions{cond}),...
+            'sliding_pow_corr_r','-v7.3');
+        
+     	fprintf(' - done\n');
         
     end % condition loop
     
-    fprintf('Saving');
-
-    % check system to get correct filepath
-    if strcmp(getenv('USER'),'til')
-        filepath = sprintf('/Volumes/til_uni/Uni/MasterthesisData/sliding_pow_corr/Pair%i',pair);
-        if ~exist(filepath, 'dir')
-            mkdir(filepath);
-        end
-    else
-        filepath = '';
-        if ~exist(filepath, 'dir')
-            mkdir(filepath);
-        end
-    end
-
-    cd(filepath);
-    addpath(genpath(filepath))
-
-    % save all conditions for current pair
-    save(sprintf('sliding_pow_cor_RS1_pair%i.mat',pair), 'sliding_pow_cor_RS1','-v7.3');
-    save(sprintf('sliding_pow_cor_NS_pair%i.mat',pair),  'sliding_pow_cor_NS','-v7.3');
-    save(sprintf('sliding_pow_cor_RS2_pair%i.mat',pair), 'sliding_pow_cor_RS2','-v7.3');
-    save(sprintf('sliding_pow_cor_ES_pair%i.mat',pair),  'sliding_pow_cor_ES','-v7.3');
-    save(sprintf('sliding_pow_cor_RS3_pair%i.mat',pair), 'sliding_pow_cor_RS3','-v7.3');
-    
-    fprintf(' - done\n'); 
     fprintf('Pair %d of %d done',pair,length(pairS));
     toc
+    
 end % pair loop
 
-fprintf(' - done\n');
 
 
 
@@ -150,29 +132,31 @@ fprintf(' - done\n');
 % - with a certain stride length
 % - compute pearson correlation of the two windows
 % - save r and p values
-function [r,p] = sliding_correlation(window_size, stride, pow_S, pow_L)
-
+function [r,p] = sliding_correlation(window_size, stride, steps, dataA, dataB)
+    
     % check if datasets are equal length)
-    if(length(pow_S) ~= length(pow_L))
-        error('Datasets unequal lengths');
+    if(length(dataA) ~= length(dataB))
+        error('Datasets have unequal length');
     end
     
     % setup matrices for r and p values
-    r = [];
-    p = [];
+    r = zeros(1,steps);
+    p = zeros(1,steps);
     % start index counter
     idx = 0;
     
     % loop:  
-    for slider_pos = window_size : stride : length(pow_S)
+    for slider_pos = window_size : stride : length(dataA)
         
         idx = idx +1;
         % cut window from datasets
-        window_S =  pow_S(slider_pos-(window_size-1):slider_pos);
-        window_L =  pow_L(slider_pos-(window_size-1):slider_pos);
+        window_S =  dataA(slider_pos-(window_size-1):slider_pos);
+        window_L =  dataB(slider_pos-(window_size-1):slider_pos);
         
         % correlate windows from both datasets
-        [r(idx), p(idx)] = corr(window_S,window_L,'type','spearman');
+        [rval, pval] = corr(window_S,window_L,'type','spearman');
+        r(idx) = rval;
+        p(idx) = pval;
     end
     
 end
@@ -232,4 +216,14 @@ end
 
 
 
+% moves to specific subfolder 
+function change_dir(filepath_saving,pair,value)
 
+    filepath = sprintf('%s/%s_values/Pair%i',filepath_saving,value,pair);
+    if ~exist(filepath, 'dir')
+        mkdir(filepath);
+    end
+    cd(filepath);
+    addpath(genpath(filepath))
+    
+end

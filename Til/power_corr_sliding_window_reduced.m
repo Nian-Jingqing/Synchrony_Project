@@ -105,8 +105,8 @@ for pair = 1:length(pairS)
             for elec = 1:n_elecs
                 
                 % correlate Speaker and Listener using sliding window
-                S = avg_pow_S(elec,:);
-                L = avg_pow_L(elec,:);
+                S = transpose(avg_pow_S(elec,:));
+                L = transpose(avg_pow_L(elec,:));
                 [r,p] = sliding_correlation(window_size,stride,steps,S,L);
                 
                 % store r and p values in array
@@ -152,9 +152,6 @@ end % pair loop
 % - compute pearson correlation of the two windows
 % - save r and p values
 function [r,p] = sliding_correlation(window_size, stride, steps, dataA, dataB)
-    
-    dataA = transpose(dataA);
-    dataB = transpose(dataB);
 
     % check if datasets are equal length)
     if(length(dataA) ~= length(dataB))
