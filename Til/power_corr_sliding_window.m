@@ -4,18 +4,15 @@
 % between each electrode pair
 % at a sliding time window
 
-
-%% Parameters
-
 % set filepath for loading and saving
 filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/sliding_pow_corr';
 
+%% Parameters
 
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
 clearvars -except pairS pairL filepath_loading filepath_saving
-
 
 fprintf('Setup');
 
@@ -216,7 +213,7 @@ end
 
 
 
-% moves to specific subfolder 
+% creates and moves to specific subfolder 
 function change_dir(filepath_saving,pair,value)
 
     filepath = sprintf('%s/%s_values/Pair%i',filepath_saving,value,pair);

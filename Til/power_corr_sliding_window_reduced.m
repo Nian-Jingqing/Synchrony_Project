@@ -8,13 +8,11 @@
     % - BetaA 18-22Hz
     % - BetaB 16-30Hz
 
-
-%% Parameters
-
 % set filepath for loading and saving
 filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/sliding_pow_corr_reduced';
 
+%% Parameters
 
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
@@ -54,16 +52,8 @@ fprintf('Setup - done\n');
 
 %% navigate to folder
 
-% check system to get correct filepath
-if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/til_uni/Uni/MasterthesisData/TF';
-else
-    filepath = '';
-end
-
-cd(filepath);
-addpath(genpath(filepath))
-
+cd(filepath_loading);
+addpath(genpath(filepath_loading))
 
 %% Sliding Power Correlation
 
@@ -98,7 +88,7 @@ for pair = 1:length(pairS)
             avg_pow_S = squeeze(mean(pow_S,2));
             avg_pow_L = squeeze(mean(pow_L,2));
             
-            % create arrays for bands
+            % create array for band
             sliding_pow_corr_band_r = zeros(n_elecs,steps);
             sliding_pow_corr_band_p = zeros(n_elecs,steps);
 
@@ -236,7 +226,7 @@ end
 
 
 
-% moves to specific subfolder 
+% creates and moves to specific subfolder 
 function change_dir(filepath_saving,pair,value)
 
     filepath = sprintf('%s/%s_values/Pair%i',filepath_saving,value,pair);

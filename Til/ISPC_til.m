@@ -3,10 +3,18 @@
 % for each condition 
 % for each frequency 
 % for each electrode pair
+
+
+% set filepath for loading and saving
+filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
+filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/ISPC_single';
+
+
 %% Setup
 fprintf('Setup');
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = get_pairs();
+clearvars -except pairS pairL filepath_loading filepath_saving
 
 n_pairs = length(pairS);
 n_frex = 44;
@@ -22,20 +30,16 @@ ISPC_ES  = zeros(n_pairs,n_frex,n_elex,n_elex);
 ISPC_RS3 = zeros(n_pairs,n_frex,n_elex,n_elex);
 
 fprintf(' - done\n');
+
+
+%% navigate to folder
+
+cd(filepath_loading);
+addpath(genpath(filepath_loading))
+
 %% Calculate ISPC
 
-% check system to get correct filepath
-if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/til_uni/Uni/MasterthesisData/TF';
-else
-    filepath = '';
-end
-
-cd(filepath);
-addpath(genpath(filepath))
-
-% Loopchain: pair - condition - frex - electrodes
-% for each pair
+% Loopchain: pair - condition - frequencies - electrodes
 for pair = 1:length(pairS)
     % for each condition
     fprintf('Pair %d of %d:\n',pair,length(pairS));
@@ -78,9 +82,9 @@ for pair = 1:length(pairS)
                     ISPC_freq(elecS,elecL) = ISPC_value;
                     
                 end 
-            end
+            end % electrode loops
             ISPC(freq,:,:) = ISPC_freq;
-        end
+        end % frequency loop
         
         % fill preinitialized matrizes
         switch conditions{cond}
@@ -96,26 +100,19 @@ for pair = 1:length(pairS)
                 ISPC_RS3(pair,:,:,:) = ISPC;
         end
         fprintf(' - done\n');
-    end
+    end % condition loop
     % check progress
     fprintf('Pair %d of %d done',pair,length(pairS));
     toc
-end
+end % pair loop
 
 
 %% Save matrices
 
 fprintf('Saving');
 
-% check system to get correct filepath
-if strcmp(getenv('USER'),'til')
-    filepath = '/Volumes/til_uni/Uni/MasterthesisData/ISPC_single';
-else
-    filepath = '';
-end
-
-cd(filepath);
-addpath(genpath(filepath))
+cd(filepath_saving);
+addpath(genpath(filepath_saving))
 
 % save all conditions
 save('ISPC_RS1.mat', 'ISPC_RS1','-v7.3');
