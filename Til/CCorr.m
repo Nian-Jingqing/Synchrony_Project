@@ -20,11 +20,11 @@ addpath(genpath(filepath_loading))
 
 %% Parameters
 
-fprintf('Setup');
 % Lists contain only speaker/listeners sorted by pair
 [pairS,pairL] = help_getpairs;
 clearvars -except pairS pairL filepath_loading fileapth_saving
 
+fprintf('Setup');
 conditions = {'RS1' 'NS' 'RS2' 'ES' 'RS3'};
 
 
