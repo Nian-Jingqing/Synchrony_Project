@@ -11,11 +11,11 @@ help_datacollector;
 nfreqs = 45;
 
 % create struct and fields
-Power_mat = struct();
-Power_mat.subj = [];
-Power_mat.role = [];
-Power_mat.cond = [];
-Power_mat.power = [];
+PSD_mat = struct();
+PSD_mat.subj = [];
+PSD_mat.role = [];
+PSD_mat.cond = [];
+PSD_mat.power = [];
 
 
 % loop over recordings
@@ -26,9 +26,9 @@ for i = 1:numel(list_of_files)
     
     % get and save subject information
     [subj, role, cond] = help_subjectinfo(EEG.setname);
-    Power_mat(i).subj = subj;
-    Power_mat(i).role = role;
-    Power_mat(i).cond = cond;
+    PSD_mat(i).subj = subj;
+    PSD_mat(i).role = role;
+    PSD_mat(i).cond = cond;
     
     
     chanpowr = ( 2*abs( fft(EEG.data,[],2) )/EEG.pnts ).^2;

@@ -1,5 +1,6 @@
 %% Script plots power for each frequency of selected Subject/Condition/electrode
 
+filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 %% Set up
 fprintf('Setup');
 % Parameters - chose
@@ -16,13 +17,9 @@ chanlocs = {chanlocs.labels};
 el_idx = find(strcmp(chanlocs,electrode));
 
 % navigate to folder
-if strcmp(getenv('USER'),'til')
-    filepath =  '/Volumes/til_uni/Uni/MasterthesisData/TF';
-else % Arturs filepath
-    filepath =  '';
-end
-cd(filepath);
-addpath(genpath(filepath));
+
+cd(filepath_loading);
+addpath(genpath(filepath_loading));
 
 fprintf(' - done\n');
 %% load Data
