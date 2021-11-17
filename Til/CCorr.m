@@ -10,8 +10,10 @@
 
 
 % set filepath for loading and saving
-filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
-filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/CCorr';
+%filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
+%filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/CCorr';
+filepath_loading = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF_new'
+filepath_saving = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\ccor'
 
 % navigate to folder
 cd(filepath_loading);
