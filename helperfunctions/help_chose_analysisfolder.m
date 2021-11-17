@@ -9,7 +9,7 @@ if strcmp(getenv('USER'),'til')
     
 else % Arturs path
     cd D:\Dropbox\Projects\Emotional_Sharing_EEG
-    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF';
+    filepath = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF_new';
     if ~exist(filepath, 'dir')
         mkdir(filepath);
     end
