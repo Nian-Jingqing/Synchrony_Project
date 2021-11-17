@@ -4,7 +4,7 @@
 srate = 500;
 
 % frequency parameters - create evenly spaced vector
-min_freq =  2; % in Hz
+min_freq =  1; % in Hz
 max_freq = 45; % in HZ
 num_freq = 44; % in count
 
@@ -26,13 +26,6 @@ for file = 1:length(list_of_files)
     
     % load next file set
     EEG = pop_loadset('filename', list_of_files(file).name);
-
-    % it is possible that we have to concatenate epochs for this
-    % here is example how
-    %
-    % concanate data
-    
-   
 
     samples = size(EEG.data,2)*size(EEG.data,3);
 
