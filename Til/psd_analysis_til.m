@@ -22,7 +22,7 @@ Power_mat.power = [];
 for i = 1:numel(list_of_files)
     % load next file
     EEG = pop_loadset('filename', list_of_files(i).name);
-    EEG = eeg_epoch2continuous(EEG); % change to continouous
+    %EEG = eeg_epoch2continuous(EEG); % change to continouous
     
     % get and save subject information
     [subj, role, cond] = help_subjectinfo(EEG.setname);
@@ -30,7 +30,9 @@ for i = 1:numel(list_of_files)
     Power_mat(i).role = role;
     Power_mat(i).cond = cond;
     
-    chanpowr = ( 2*abs( fft(EEG.data/EEG.pnts ))).^2;
+    
+    chanpowr = ( 2*abs( fft(EEG.data,[],2) )/EEG.pnts ).^2;
+    chanpowr = mean(chanpowr,3);
     hz = linspace(0,EEG.srate/2,floor(EEG.pnts/2)+1);
     
 
@@ -51,9 +53,16 @@ for i = 1:numel(list_of_files)
     
     % save power/freq matrix in struct
     Power_mat(i).power =  chanpowr(:,1:find(hz == 45));
-    plot(hz(1:find(hz == 45)), Power_mat(2).power')
+    Power_mat(i).hz = hz(1:find(hz == 45));
+    %plot(hz(1:find(hz == 45)), Power_mat(2).power')
     % display progress (0 to 1)
     disp(i/numel(list_of_files));
 end
 
-eegplot(EEG.data,'srate',EEG.srate,'eloc_file',EEG.chanlocs)
+% for i=1:370
+% figure(i), clf
+% plot(Power_mat(i).hz,Power_mat(i).power,'linew',2)
+% xlabel('Frequency (Hz)'), ylabel('Power (\muV)')
+% set(gca,'xlim',[0 30])
+% title(sprintf('Subject %s Role %s Condition %s', Power_mat(i).subj, Power_mat(i).role, Power_mat(i).cond))
+% end
