@@ -78,17 +78,17 @@ n_ROI = 4;
 % setup matrices (rho and pval): 37x4x24
 % (pairs-frequencybands-electrodepairs)
 
-ccorr_rho_RS1  = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_rho_NS   = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_rho_RS2  = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_rho_ES   = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_rho_RS3  = zeros(n_pairs,n_bands,n_electrodes);
+ccorr_rho_RS1  = zeros(n_pairs,n_bands,n_ROI);
+ccorr_rho_NS   = zeros(n_pairs,n_bands,n_ROI);
+ccorr_rho_RS2  = zeros(n_pairs,n_bands,n_ROI);
+ccorr_rho_ES   = zeros(n_pairs,n_bands,n_ROI);
+ccorr_rho_RS3  = zeros(n_pairs,n_bands,n_ROI);
 
-ccorr_pval_RS1 = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_pval_NS  = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_pval_RS2 = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_pval_ES  = zeros(n_pairs,n_bands,n_electrodes);
-ccorr_pval_RS3 = zeros(n_pairs,n_bands,n_electrodes);
+% ccorr_pval_RS1 = zeros(n_pairs,n_bands,n_electrodes);
+% ccorr_pval_NS  = zeros(n_pairs,n_bands,n_electrodes);
+% ccorr_pval_RS2 = zeros(n_pairs,n_bands,n_electrodes);
+% ccorr_pval_ES  = zeros(n_pairs,n_bands,n_electrodes);
+% ccorr_pval_RS3 = zeros(n_pairs,n_bands,n_electrodes);
 
 %% CCorr
 
@@ -115,14 +115,14 @@ for pair = 1:n_pairs
         %angles_L = squeeze(angle(tf_L.tf_elec));
         
         % prepare arrays
-        ccorr_rho  = zeros(n_bands,n_electrodes);
-        ccorr_pval = zeros(n_bands,n_electrodes);
+        ccorr_rho  = zeros(n_bands,n_ROI);
+        ccorr_pval = zeros(n_bands,n_ROI);
         
         for band = 1:n_bands
             
             % prepare arrays
-            ccorr_rho_band  = zeros(1,n_electrodes);
-            ccorr_pval_band = zeros(1,n_electrodes);
+            ccorr_rho_band  = zeros(1,n_ROI);
+            ccorr_pval_band = zeros(1,n_ROI);
             
             for ROI = 1:n_ROI
                 
@@ -222,11 +222,10 @@ save('ccorr_rho_RS3.mat', 'ccorr_rho_RS3','-v7.3');
 cd D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\ccor\csv_files_ccor
 % 
 % 
-writecsv('NS_theta', squeeze(ccor_rho_NS(:,1,:)))
-% 
-csvwrite('RS3_theta.csv', squeeze(ccorr_rho_RS3(:,1,:)))
-csvwrite('RS3_alpha.csv', squeeze(ccorr_rho_RS3(:,2,:)))
-csvwrite('RS3_beta1.csv', squeeze(ccorr_rho_RS3(:,3,:)))
-csvwrite('RS3_beta2.csv', squeeze(ccorr_rho_RS3(:,4,:)))
+
+% csvwrite('RS3_theta.csv', squeeze(ccorr_rho_RS3(:,1,:)))
+% csvwrite('RS3_alpha.csv', squeeze(ccorr_rho_RS3(:,2,:)))
+% csvwrite('RS3_beta1.csv', squeeze(ccorr_rho_RS3(:,3,:)))
+% csvwrite('RS3_beta2.csv', squeeze(ccorr_rho_RS3(:,4,:)))
 
 
