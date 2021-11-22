@@ -5,15 +5,17 @@ srate = 500;
 
 % frequency parameters - create evenly spaced vector
 min_freq =  1; % in Hz
-max_freq = 45; % in HZ
+max_freq = 44; % in HZ
 num_freq = 44; % in count
 
 frex = linspace(min_freq,max_freq,num_freq);
 
 % For Complex Morlet Wavelet: create time vector from -1 to +1 
 % length = twice sampling rate
+%time = (-1:1*srate)/srate;
+%time = time - mean(time); 
+
 time = (0:2*srate)/srate;
-time = time - mean(time); 
 
 %% Load data
 help_datacollector;
@@ -54,18 +56,24 @@ for file = 1:length(list_of_files)
         % extract tf for each frequency
         for f_idx=1:num_freq
 
-            csine  = exp(1i*2*pi*frex(f_idx)*time); % complex sine wave
-            gaus_win = exp( -4*log(2)*time.^2 / .3^2 ); % gaussian window - updated from cohen 2019
-
-            cmw = csine .* gaus_win; % resulting complex morlet wavelet:
-
+            %csine  = exp(1i*2*pi*frex(f_idx)*time); % complex sine wave
+             %aus_win = exp( -4*log(2)*time.^2 / .3^2 ); % gaussian window - updated from cohen 2019
+ 
+             %cmw = csine .* gaus_win; % resulting complex morlet wavelet:
+            
+            %s = 100 / (2*pi*frex); % using num-cycles formula
+            %cmw  = exp(1i*2*pi*frex*time) .* exp( -time.^2/(2*s^2) );
+            
+            cmw = exp(1i*2*pi*frex(f_idx)*time) .* ...
+                exp(-4*log(2)*time.^2 / .3^2);
+            
             cmwX = fft(cmw,nConv); % FFT of wavelet
             cmwX = cmwX./max(cmwX); % ampl. normalization
 
             % Finish convolution
-            as = ifft( dataX .* cmwX );
+            as = ifft( dataX .* cmwX,nConv );
             as = as(halfK+1:end-halfK+1); % cutoff wavelet overhang
-            as = reshape(as,size(data_e,1),size(data_e,2)); 
+            %as = reshape(as,size(data_e,1),size(data_e,2)); 
 
             % average over trials, save in freq_matrix
             tf(f_idx,:) = as;
