@@ -270,92 +270,92 @@ end % pair loop
 % 
 % 
 % %save csv
-% cd D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\ccor\csv_files_ccor
-% % 
-% % 
-% % ccorr
-% csvwrite('R3_theta_ccorr.csv', squeeze(ccorr_rho_RS3(:,1,:)))
-% csvwrite('R3_alpha_ccorr.csv', squeeze(ccorr_rho_RS3(:,2,:)))
-% csvwrite('R3_beta__ccorr.csv', squeeze(ccorr_rho_RS3(:,3,:)))
-% 
-% csvwrite('R2_theta_ccorr.csv', squeeze(ccorr_rho_RS2(:,1,:)))
-% csvwrite('R2_alpha_ccorr.csv', squeeze(ccorr_rho_RS2(:,2,:)))
-% csvwrite('R2_beta__ccorr.csv', squeeze(ccorr_rho_RS2(:,3,:)))
-% 
-% csvwrite('R1_theta_ccorr.csv', squeeze(ccorr_rho_RS1(:,1,:)))
-% csvwrite('R1_alpha_ccorr.csv', squeeze(ccorr_rho_RS1(:,2,:)))
-% csvwrite('R1_beta__ccorr.csv', squeeze(ccorr_rho_RS1(:,3,:)))
-% 
-% csvwrite('ES_theta_ccorr.csv', squeeze(ccorr_rho_ES(:,1,:)))
-% csvwrite('ES_alpha_ccorr.csv', squeeze(ccorr_rho_ES(:,2,:)))
-% csvwrite('ES_beta__ccorr.csv', squeeze(ccorr_rho_ES(:,3,:)))
-% 
-% csvwrite('NS_theta_ccorr.csv', squeeze(ccorr_rho_NS(:,1,:)))
-% csvwrite('NS_alpha_ccorr.csv', squeeze(ccorr_rho_NS(:,2,:)))
-% csvwrite('NS_beta__ccorr.csv', squeeze(ccorr_rho_NS(:,3,:)))
-% 
-% % pow_cor
-% csvwrite('R3_theta_p_cor.csv', squeeze(pow_cor_r_RS3(:,1,:)))
-% csvwrite('R3_alpha_p_cor.csv', squeeze(pow_cor_r_RS3(:,2,:)))
-% csvwrite('R3_beta__p_cor.csv', squeeze(pow_cor_r_RS3(:,3,:)))
-% 
-% csvwrite('R2_theta_p_cor.csv', squeeze(pow_cor_r_RS2(:,1,:)))
-% csvwrite('R2_alpha_p_cor.csv', squeeze(pow_cor_r_RS2(:,2,:)))
-% csvwrite('R2_beta__p_cor.csv', squeeze(pow_cor_r_RS2(:,3,:)))
-% 
-% csvwrite('R1_theta_p_cor.csv', squeeze(pow_cor_r_RS1(:,1,:)))
-% csvwrite('R1_alpha_p_cor.csv', squeeze(pow_cor_r_RS1(:,2,:)))
-% csvwrite('R1_beta__p_cor.csv', squeeze(pow_cor_r_RS1(:,3,:)))
-% 
-% csvwrite('ES_theta_p_cor.csv', squeeze(pow_cor_r_ES(:,1,:)))
-% csvwrite('ES_alpha_p_cor.csv', squeeze(pow_cor_r_ES(:,2,:)))
-% csvwrite('ES_beta__p_cor.csv', squeeze(pow_cor_r_ES(:,3,:)))
-% 
-% csvwrite('NS_theta_p_cor.csv', squeeze(pow_cor_r_NS(:,1,:)))
-% csvwrite('NS_alpha_p_cor.csv', squeeze(pow_cor_r_NS(:,2,:)))
-% csvwrite('NS_beta__p_cor.csv', squeeze(pow_cor_r_NS(:,3,:)))
-% 
-% % ISPC/PLV
-% csvwrite('R3_theta_ispc.csv', squeeze(ISPC_RS3(:,1,:)))
-% csvwrite('R3_alpha_ispc.csv', squeeze(ISPC_RS3(:,2,:)))
-% csvwrite('R3_beta__ispc.csv', squeeze(ISPC_RS3(:,3,:)))
-% 
-% csvwrite('R2_theta_ispc.csv', squeeze(ISPC_RS2(:,1,:)))
-% csvwrite('R2_alpha_ispc.csv', squeeze(ISPC_RS2(:,2,:)))
-% csvwrite('R2_beta__ispc.csv', squeeze(ISPC_RS2(:,3,:)))
-% 
-% csvwrite('R1_theta_ispc.csv', squeeze(ISPC_RS1(:,1,:)))
-% csvwrite('R1_alpha_ispc.csv', squeeze(ISPC_RS1(:,2,:)))
-% csvwrite('R1_beta__ispc.csv', squeeze(ISPC_RS1(:,3,:)))
-% 
-% csvwrite('ES_theta_ispc.csv', squeeze(ISPC_ES(:,1,:)))
-% csvwrite('ES_alpha_ispc.csv', squeeze(ISPC_ES(:,2,:)))
-% csvwrite('ES_beta__ispc.csv', squeeze(ISPC_ES(:,3,:)))
-% 
-% csvwrite('NS_theta_ispc.csv', squeeze(ISPC_NS(:,1,:)))
-% csvwrite('NS_alpha_ispc.csv', squeeze(ISPC_NS(:,2,:)))
-% csvwrite('NS_beta__ispc.csv', squeeze(ISPC_NS(:,3,:)))
-% 
-% %   amplitude envelope cor
-% csvwrite('R3_theta_amenv.csv', squeeze(am_env_RS3(:,1,:)))
-% csvwrite('R3_alpha_amenv.csv', squeeze(am_env_RS3(:,2,:)))
-% csvwrite('R3_beta__amenv.csv', squeeze(am_env_RS3(:,3,:)))
-% 
-% csvwrite('R2_theta_amenv.csv', squeeze(am_env_RS2(:,1,:)))
-% csvwrite('R2_alpha_amenv.csv', squeeze(am_env_RS2(:,2,:)))
-% csvwrite('R2_beta__amenv.csv', squeeze(am_env_RS2(:,3,:)))
-% 
-% csvwrite('R1_theta_amenv.csv', squeeze(am_env_RS1(:,1,:)))
-% csvwrite('R1_alpha_amenv.csv', squeeze(am_env_RS1(:,2,:)))
-% csvwrite('R1_beta__amenv.csv', squeeze(am_env_RS1(:,3,:)))
-% 
-% csvwrite('ES_theta_amenv.csv', squeeze(am_env_ES(:,1,:)))
-% csvwrite('ES_alpha_amenv.csv', squeeze(am_env_ES(:,2,:)))
-% csvwrite('ES_beta__amenv.csv', squeeze(am_env_ES(:,3,:)))
-% 
-% csvwrite('NS_theta_amenv.csv', squeeze(am_env_NS(:,1,:)))
-% csvwrite('NS_alpha_amenv.csv', squeeze(am_env_NS(:,2,:)))
-% csvwrite('NS_beta__amenv.csv', squeeze(am_env_NS(:,3,:)))
+cd D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\ccor\csv_files_ccor
 % 
 % 
-% 
+% ccorr
+csvwrite('R3_theta_ccorr.csv', squeeze(ccorr_rho_RS3(:,1,:)))
+csvwrite('R3_alpha_ccorr.csv', squeeze(ccorr_rho_RS3(:,2,:)))
+csvwrite('R3_beta__ccorr.csv', squeeze(ccorr_rho_RS3(:,3,:)))
+
+csvwrite('R2_theta_ccorr.csv', squeeze(ccorr_rho_RS2(:,1,:)))
+csvwrite('R2_alpha_ccorr.csv', squeeze(ccorr_rho_RS2(:,2,:)))
+csvwrite('R2_beta__ccorr.csv', squeeze(ccorr_rho_RS2(:,3,:)))
+
+csvwrite('R1_theta_ccorr.csv', squeeze(ccorr_rho_RS1(:,1,:)))
+csvwrite('R1_alpha_ccorr.csv', squeeze(ccorr_rho_RS1(:,2,:)))
+csvwrite('R1_beta__ccorr.csv', squeeze(ccorr_rho_RS1(:,3,:)))
+
+csvwrite('ES_theta_ccorr.csv', squeeze(ccorr_rho_ES(:,1,:)))
+csvwrite('ES_alpha_ccorr.csv', squeeze(ccorr_rho_ES(:,2,:)))
+csvwrite('ES_beta__ccorr.csv', squeeze(ccorr_rho_ES(:,3,:)))
+
+csvwrite('NS_theta_ccorr.csv', squeeze(ccorr_rho_NS(:,1,:)))
+csvwrite('NS_alpha_ccorr.csv', squeeze(ccorr_rho_NS(:,2,:)))
+csvwrite('NS_beta__ccorr.csv', squeeze(ccorr_rho_NS(:,3,:)))
+
+% pow_cor
+csvwrite('R3_theta_p_cor.csv', squeeze(pow_cor_r_RS3(:,1,:)))
+csvwrite('R3_alpha_p_cor.csv', squeeze(pow_cor_r_RS3(:,2,:)))
+csvwrite('R3_beta__p_cor.csv', squeeze(pow_cor_r_RS3(:,3,:)))
+
+csvwrite('R2_theta_p_cor.csv', squeeze(pow_cor_r_RS2(:,1,:)))
+csvwrite('R2_alpha_p_cor.csv', squeeze(pow_cor_r_RS2(:,2,:)))
+csvwrite('R2_beta__p_cor.csv', squeeze(pow_cor_r_RS2(:,3,:)))
+
+csvwrite('R1_theta_p_cor.csv', squeeze(pow_cor_r_RS1(:,1,:)))
+csvwrite('R1_alpha_p_cor.csv', squeeze(pow_cor_r_RS1(:,2,:)))
+csvwrite('R1_beta__p_cor.csv', squeeze(pow_cor_r_RS1(:,3,:)))
+
+csvwrite('ES_theta_p_cor.csv', squeeze(pow_cor_r_ES(:,1,:)))
+csvwrite('ES_alpha_p_cor.csv', squeeze(pow_cor_r_ES(:,2,:)))
+csvwrite('ES_beta__p_cor.csv', squeeze(pow_cor_r_ES(:,3,:)))
+
+csvwrite('NS_theta_p_cor.csv', squeeze(pow_cor_r_NS(:,1,:)))
+csvwrite('NS_alpha_p_cor.csv', squeeze(pow_cor_r_NS(:,2,:)))
+csvwrite('NS_beta__p_cor.csv', squeeze(pow_cor_r_NS(:,3,:)))
+
+% ISPC/PLV
+csvwrite('R3_theta_ispc.csv', squeeze(ISPC_RS3(:,1,:)))
+csvwrite('R3_alpha_ispc.csv', squeeze(ISPC_RS3(:,2,:)))
+csvwrite('R3_beta__ispc.csv', squeeze(ISPC_RS3(:,3,:)))
+
+csvwrite('R2_theta_ispc.csv', squeeze(ISPC_RS2(:,1,:)))
+csvwrite('R2_alpha_ispc.csv', squeeze(ISPC_RS2(:,2,:)))
+csvwrite('R2_beta__ispc.csv', squeeze(ISPC_RS2(:,3,:)))
+
+csvwrite('R1_theta_ispc.csv', squeeze(ISPC_RS1(:,1,:)))
+csvwrite('R1_alpha_ispc.csv', squeeze(ISPC_RS1(:,2,:)))
+csvwrite('R1_beta__ispc.csv', squeeze(ISPC_RS1(:,3,:)))
+
+csvwrite('ES_theta_ispc.csv', squeeze(ISPC_ES(:,1,:)))
+csvwrite('ES_alpha_ispc.csv', squeeze(ISPC_ES(:,2,:)))
+csvwrite('ES_beta__ispc.csv', squeeze(ISPC_ES(:,3,:)))
+
+csvwrite('NS_theta_ispc.csv', squeeze(ISPC_NS(:,1,:)))
+csvwrite('NS_alpha_ispc.csv', squeeze(ISPC_NS(:,2,:)))
+csvwrite('NS_beta__ispc.csv', squeeze(ISPC_NS(:,3,:)))
+
+%   amplitude envelope cor
+csvwrite('R3_theta_amenv.csv', squeeze(am_env_RS3(:,1,:)))
+csvwrite('R3_alpha_amenv.csv', squeeze(am_env_RS3(:,2,:)))
+csvwrite('R3_beta__amenv.csv', squeeze(am_env_RS3(:,3,:)))
+
+csvwrite('R2_theta_amenv.csv', squeeze(am_env_RS2(:,1,:)))
+csvwrite('R2_alpha_amenv.csv', squeeze(am_env_RS2(:,2,:)))
+csvwrite('R2_beta__amenv.csv', squeeze(am_env_RS2(:,3,:)))
+
+csvwrite('R1_theta_amenv.csv', squeeze(am_env_RS1(:,1,:)))
+csvwrite('R1_alpha_amenv.csv', squeeze(am_env_RS1(:,2,:)))
+csvwrite('R1_beta__amenv.csv', squeeze(am_env_RS1(:,3,:)))
+
+csvwrite('ES_theta_amenv.csv', squeeze(am_env_ES(:,1,:)))
+csvwrite('ES_alpha_amenv.csv', squeeze(am_env_ES(:,2,:)))
+csvwrite('ES_beta__amenv.csv', squeeze(am_env_ES(:,3,:)))
+
+csvwrite('NS_theta_amenv.csv', squeeze(am_env_NS(:,1,:)))
+csvwrite('NS_alpha_amenv.csv', squeeze(am_env_NS(:,2,:)))
+csvwrite('NS_beta__amenv.csv', squeeze(am_env_NS(:,3,:)))
+
+
+
