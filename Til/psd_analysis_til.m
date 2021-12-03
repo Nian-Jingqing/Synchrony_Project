@@ -59,10 +59,26 @@ for i = 1:numel(list_of_files)
     disp(i/numel(list_of_files));
 end
 
-% for i=1:370
-% figure(i), clf
-% plot(Power_mat(i).hz,Power_mat(i).power,'linew',2)
-% xlabel('Frequency (Hz)'), ylabel('Power (\muV)')
-% set(gca,'xlim',[0 30])
-% title(sprintf('Subject %s Role %s Condition %s', Power_mat(i).subj, Power_mat(i).role, Power_mat(i).cond))
-% end
+
+%% plot power for each pair
+
+cd D:\Dropbox\Projects\Emotional_Sharing_EEG\Figures\Power_Pairs
+
+pairs = [0 linspace(1,35,35)*10];
+
+for pair=1:36
+figure(pair), clf
+%max_pair = [];
+for i=1:10
+subplot(5,2,i);
+plot(Power_mat(i+pairs(pair)).hz,Power_mat(i+pairs(pair)).power,'linew',2)
+xlabel('Frequency (Hz)'), ylabel('Power (\muV)')
+set(gca,'xlim',[0 45])
+title(sprintf('Subject %s Role %s Condition %s', PSD_mat(i+pairs(pair)).subj, PSD_mat(i+pairs(pair)).role, PSD_mat(i+pairs(pair)).cond))
+%max_file = max(max(Power_mat(i).power));
+%max_pair = [ max_pair max_file];
+%mygca(i) = gca;
+end
+saveas(gcf,sprintf('Pair_%d.jpg',pair))
+%set(mygca, 'Ylim', [0 max(max_pair)])
+end
