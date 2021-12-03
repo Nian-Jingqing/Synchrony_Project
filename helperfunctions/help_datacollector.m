@@ -1,4 +1,4 @@
-%% Helperscript to load data from respective folders
+    %% Helperscript to load data from respective folders
 % create list of setfiles
 if strcmp(getenv('USER'),'til')
     cd /Users/til/Uni/Master/_Ma.Thesis
