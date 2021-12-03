@@ -1,6 +1,6 @@
 %% Load data
 % through helper skript
-datacollector;
+help_datacollector;
 
 %% extract pre-processing info
 
@@ -17,7 +17,7 @@ for i = 1:numel(list_of_files)
     % load next EEG file
     EEG = pop_loadset('filename', list_of_files(i).name);
     % filename
-    Preprocessing_info(i).subject = EEG.subject;
+    Preprocessing_info(i).subject = EEG.setname;
     % how much data is left - max epoch is 300
     Preprocessing_info(i).epochs = length(EEG.epoch);
     % how many ICs were deleted
