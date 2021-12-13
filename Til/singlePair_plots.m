@@ -21,7 +21,7 @@
 %filepath_loading = '/Volumes/til_uni/Uni/MasterthesisData/TF';
 %filepath_saving = '/Volumes/til_uni/Uni/MasterthesisData/CCorr';
 filepath_loading = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF_new';
-filepath_saving = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\ccor';
+
 
 % navigate to folder
 cd(filepath_loading);
@@ -30,100 +30,25 @@ addpath(genpath(filepath_loading))
 
 %% Parameters
 
-% Lists contain only speaker/listeners sorted by pair
-[pairS,pairL] = help_getpairs;
-clearvars -except pairS pairL filepath_loading fileapth_saving
-
-fprintf('Setup');
-conditions = {'RS1' 'NS' 'RS2' 'ES' 'RS3'};
-
-
-
 % frequencies (from tf_til.m)
 min_freq =  2; % in Hz
 max_freq = 45; % in HZ
 num_freq = 44; % in count
 freqs = linspace(min_freq,max_freq,num_freq);
-trial_size = 500;
-
-% construct frequency bands
-freq_band_names = {'theta' 'alpha' 'beta'};
-theta = freqs(freqs >=  4 & freqs <=  7);
-alpha = freqs(freqs >=  8 & freqs <= 12);
-beta = freqs(freqs >= 14 & freqs <= 30);
-%beta2 = freqs(freqs >= 17 & freqs <= 30);
-freq_bands = {theta alpha beta};
-
-% construct ROI
-ROI_names = {'frontal' 'parietal' 'temporal' , 'occipital'};
-frontal = [3 4 11 12 17 22];
-parietal = [7 8 15 16 19 23];
-temporal = [13 14];
-occipital = [9 10];
-ROIs = {frontal, parietal, temporal, occipital};
-
-% sizes
-n_pairs = length(pairS);
+trial_size = 50;
 n_electrodes = 24;
-n_conditions = length(conditions);
-n_bands = length(freq_bands);
-n_ROI = 4;
-
-
-
-
-% setup matrices (rho and pval): 37x4x24
-% (pairs-frequencybands-electrodepairs)
-
-ccorr_rho_RS1  = zeros(n_pairs,n_bands,n_ROI);
-ccorr_rho_NS   = zeros(n_pairs,n_bands,n_ROI);
-ccorr_rho_RS2  = zeros(n_pairs,n_bands,n_ROI);
-ccorr_rho_ES   = zeros(n_pairs,n_bands,n_ROI);
-ccorr_rho_RS3  = zeros(n_pairs,n_bands,n_ROI);
-
-pow_cor_r_RS1 = zeros(n_pairs,n_bands,n_ROI);
-pow_cor_r_NS  = zeros(n_pairs,n_bands,n_ROI);
-pow_cor_r_RS2 = zeros(n_pairs,n_bands,n_ROI);
-pow_cor_r_ES  = zeros(n_pairs,n_bands,n_ROI);
-pow_cor_r_RS3 = zeros(n_pairs,n_bands,n_ROI);
-
-ISPC_RS1 = zeros(n_pairs,n_bands,n_ROI);
-ISPC_NS  = zeros(n_pairs,n_bands,n_ROI);
-ISPC_RS2 = zeros(n_pairs,n_bands,n_ROI);
-ISPC_ES  = zeros(n_pairs,n_bands,n_ROI);
-ISPC_RS3 = zeros(n_pairs,n_bands,n_ROI);
-
-am_env_RS1 = zeros(n_pairs,n_bands,n_ROI);
-am_env_NS  = zeros(n_pairs,n_bands,n_ROI);
-am_env_RS2 = zeros(n_pairs,n_bands,n_ROI);
-am_env_ES  = zeros(n_pairs,n_bands,n_ROI);
-am_env_RS3 = zeros(n_pairs,n_bands,n_ROI);
-
-%% CCorr
-
-% Loopchain: Pairs-Conditions-frequencybands-electrodes
-
-
-for pair = 1:n_pairs
-    fprintf('Pair %d of %d:\n',pair,length(pairS));
-    tic
-    for cond = 1:n_conditions
-        fprintf('Condition %s',conditions{cond});
-        
+%% 
         % load current condition for each subject of current pair
-        tf_S = load(sprintf('tf_subject%s_roleS_condition%s.mat',pairS{pair},conditions{cond}));
-        tf_L = load(sprintf('tf_subject%s_roleL_condition%s.mat',pairL{pair},conditions{cond}));
-        fprintf(' - loaded');
-        
+        tf_S = load('tf_subject018_roleS_conditionES.mat');
+        tf_L = load('tf_subject017_roleL_conditionES.mat');
+
         n = size(tf_S.tf_elec,3);
-        trials = n/500;
+        trials = n/trial_size;
         
         
         % prepare arrays
         ccorr_rho  = zeros(n_bands,n_ROI);
-        pow_cor = zeros(n_bands,n_ROI);
         ISPC = zeros(n_bands,n_ROI);
-        am_env = zeros(n_bands, n_ROI);
         
         for band = 1:n_bands
             
@@ -243,14 +168,14 @@ for pair = 1:n_pairs
                 
         end
         fprintf(' - done\n');
-    end % condition loop
-    
-    % check progress
-    fprintf('Pair %d of %d done',pair,length(pairS));
-    toc
-    
-end % pair loop
-
+%     end % condition loop
+%     
+%     % check progress
+%     fprintf('Pair %d of %d done',pair,length(pairS));
+%     toc
+%     
+% end % pair loop
+% 
 
 
 
