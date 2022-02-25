@@ -5,17 +5,26 @@ filepath_loading = 'D:\Dropbox\Projects\Emotional_Sharing_EEG\EEG_Data\TF_new';
 cd(filepath_loading);
 addpath(genpath(filepath_loading))
 
+
+
+
 % frequencies (from tf_til.m)
 min_freq =  2; % in Hz
 max_freq = 45; % in HZ
 num_freq = 44; % in count
 freqs = linspace(min_freq,max_freq,num_freq);
-trial_size = 50;
+trial_size = 100;
 n_electrodes = 24;
 %%
 % load current condition for each subject of current pair
-tf_S = load('tf_subject018_roleS_conditionES.mat');
-tf_L = load('tf_subject017_roleL_conditionES.mat');
+tf_S = load('tf_subject030_roleS_conditionES.mat');
+tf_L = load('tf_subject008_roleL_conditionES.mat');
+
+n_S = size(tf_S.tf_elec,3);
+n_L = size(tf_L.tf_elec,3);
+
+tf_S.tf_elec = tf_S.tf_elec(:,:,1:min(n_S, n_L));
+tf_L.tf_elec = tf_L.tf_elec(:,:,1:min(n_S, n_L));
 
 n = size(tf_S.tf_elec,3);
 trials = n/trial_size;
@@ -28,7 +37,7 @@ ISPC = zeros(num_freq,24,24);
 ccorr_rho_trials  = zeros(num_freq, 24,24,trials);
 ISPC_trials = zeros(num_freq,24,24,trials);
 
-for frequency = 1:freqs
+for frequency = 1:44
     
     % prepare arrays
     ccorr_rho_freq  = zeros(24,24);
@@ -74,14 +83,12 @@ for frequency = 1:freqs
         end
     end % electrode loop
     
-    ccorr_rho(fequency,:,:)  = ccorr_rho_freq;
-    ISPC(frequency,:,:) = ISPC_band;
+    ccorr_rho(frequency,:,:)  = ccorr_rho_freq;
+    ISPC(frequency,:,:) = ISPC_freq;
     
-    ccorr_rho_trials(fequency,:,:)  = ccorr_rho_freq_trials;
-    ISPC_trials(frequency,:,:) = ISPC_freq_trials;
+    ccorr_rho_trials(frequency,:,:,:)  = ccorr_rho_freq_trials;
+    ISPC_trials(frequency,:,:,:) = ISPC_freq_trials;
     
+    fprintf('Next Freq')
     
 end % frequency band loop
-      
-
-

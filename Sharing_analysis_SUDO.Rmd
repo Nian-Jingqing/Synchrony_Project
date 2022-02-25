@@ -1,0 +1,300 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Question: Are there differences in IBS between different type of sharing?
+
+Here we test two sync measures: CCORR and ISPC/PLV
+
+Here we test 4 ROIs: frontal, temporal, parietal, occipital\
+frontal - F3, F4, F7, F8, Fz, AFz\
+parietal - P3, P4, P7, P8, Pz, CPz\
+temporal - T7, T8\
+occipital - O1, O2\
+
+Here we test three frequency bands: theta, alpha, beta\
+theta (3-7 Hz)\
+alpha (8-12 Hz)\
+beta (14-30 Hz)\
+
+First I compare Resting state 1 (baseline) with sharing conditions. In case there is a difference between baseline and sharing condition for a particulare ROI, Frequency, Sync measure, I follow it up with 2x2 comparison between types of sharing (emotional/neutral) and order of sharing (first emotional/neutral).
+
+
+load required libraries\
+```{r}
+library(lme4)
+library(lmerTest)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+```
+
+remove warnings
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+load data\
+add info about ROIs\
+add info about bands
+add info about sync measures\
+rename variables\
+concatenate in one data.frame\
+subset data to resting state 1, emotional sharing, neutral sharing\
+
+```{r}
+list_all_files <-list.files("./csv_files_ccor/",full.names = TRUE)
+d<-do.call("rbind",lapply(list_all_files,read.csv, header=FALSE))
+
+ROIs <- c('frontal', 'temporal', 'parietal', 'occipital')
+bands <-c('theta', 'alpha', 'beta_')
+sync_measures <- c('ccorr', 'p_cor', 'ispc.', 'amenv')
+
+
+freq<-c()
+condition<-c()
+sync <-c()
+for (rowi in 1:60){
+  freq_tmp <- substr(list_all_files[rowi],21,25)
+  freq_tmp <- rep(freq_tmp,36)
+  freq <- c(freq,freq_tmp)
+
+  condition_tmp <- substr(list_all_files[rowi],18,19)
+  condition_tmp <- rep(condition_tmp, 36)
+  condition<-c(condition,condition_tmp)
+  
+  sync_measures_tmp <- substr(list_all_files[rowi],27,31)
+  sync_measures_tmp <-  rep(sync_measures_tmp,36)
+  sync <- c(sync, sync_measures_tmp)
+  
+}
+
+
+d_pairs_order <- read.csv('order_pairs.csv')
+
+order_pairs <- rep(d_pairs_order$FirstSharing, 60)
+pair_numbers <- rep(1:36,60)
+d<-cbind(d,order_pairs,pair_numbers,freq,condition, sync)
+colnames(d)[1:4]<-ROIs
+colnames(d)[5]<-'FirstSharing'
+colnames(d)[6] <- 'pair'
+
+d <- gather(d, ROI, IBS, frontal:occipital,factor_key = TRUE)
+
+d <- d[d$condition == 'R1' | d$condition == 'ES' | d$condition == 'NS', ]
+d$condition <- factor(d$condition)
+
+
+
+```
+
+change variables for modelling\
+
+Sharing\
+resting state  -.5\
+sharing         .5\
+ 
+SharingOrder\
+E first    -.5
+N firts     .5
+
+
+
+```{r}
+
+d$freq <- as.factor(d$freq)
+d$condition <- as.factor(d$condition)
+d$sync <- as.factor(d$sync)
+d$FirstSharing <- as.factor(d$FirstSharing)
+
+for (irow in 1:nrow(d)){
+  if (d$condition[irow] == 'R1'){
+    d$Sharing[irow] <- -.5
+    d$SharingPLOT[irow] <- 'Resting state'
+  }
+  else if (d$condition[irow] == 'ES'){
+    d$Sharing[irow] <- .5
+    d$SharingPLOT[irow] <- 'Sharing'
+      }
+  else if (d$condition[irow] == 'NS'){
+    d$Sharing[irow] <- .5
+    d$SharingPLOT[irow] <- 'Sharing'
+      }
+} 
+
+for (irow in 1:nrow(d)){
+  if (d$FirstSharing[irow] == 'E'){
+    d$SharingOrder[irow] <- -.5
+  }
+  else if (d$FirstSharing[irow] == 'N'){
+    d$SharingOrder[irow] <- .5
+  }
+} 
+
+```
+
+CCORR REAL PAIRS
+
+Here I would like to point (visually) that differences (statistical) between resting state 1 (baseline) are not in our favor. Only in Theta (frontal, temporal) IBS is higher in Sharing conditions than Baseline. 
+In alpha (all ROIs) and beta (temporal, parietal, occipital) IBS is higher in baseline. 
+
+```{r}
+d_ccorr <- d[d$sync == 'ccorr',]
+
+
+plotIBS <- ggplot(data=d_ccorr, aes(x=SharingPLOT, y=IBS, fill=SharingPLOT))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(freq~ROI)+
+  theme_bw()
+plotIBS
+```
+
+ISPC REAL PAIRS
+
+Parietal difference in alpha and beta is also stronger for baseline than sharing conditions
+
+
+```{r}
+d_ccorr <- d[d$sync == 'ispc.',]
+
+
+plotIBS <- ggplot(data=d_ccorr, aes(x=SharingPLOT, y=IBS, fill=SharingPLOT))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(freq~ROI)+
+  theme_bw()
+plotIBS
+```
+
+
+SUDO DATA
+
+```{r}
+list_all_files <-list.files("./csv_files_ccor_SUDO/",full.names = TRUE)
+d<-do.call("rbind",lapply(list_all_files,read.csv, header=FALSE))
+
+ROIs <- c('frontal', 'temporal', 'parietal', 'occipital')
+bands <-c('theta', 'alpha', 'beta_')
+sync_measures <- c('ccorr', 'p_cor', 'ispc.', 'amenv')
+
+
+freq<-c()
+condition<-c()
+sync <-c()
+for (rowi in 1:60){
+  freq_tmp <- substr(list_all_files[rowi],26,30)
+  freq_tmp <- rep(freq_tmp,36)
+  freq <- c(freq,freq_tmp)
+
+  condition_tmp <- substr(list_all_files[rowi],23,24)
+  condition_tmp <- rep(condition_tmp, 36)
+  condition<-c(condition,condition_tmp)
+  
+  sync_measures_tmp <- substr(list_all_files[rowi],32,36)
+  sync_measures_tmp <-  rep(sync_measures_tmp,36)
+  sync <- c(sync, sync_measures_tmp)
+  
+}
+
+
+d_pairs_order <- read.csv('order_pairs.csv')
+
+order_pairs <- rep(d_pairs_order$FirstSharing, 60)
+pair_numbers <- rep(1:36,60)
+d<-cbind(d,order_pairs,pair_numbers,freq,condition, sync)
+colnames(d)[1:4]<-ROIs
+colnames(d)[5]<-'FirstSharing'
+colnames(d)[6] <- 'pair'
+
+d <- gather(d, ROI, IBS, frontal:occipital,factor_key = TRUE)
+
+d <- d[d$condition == 'R1' | d$condition == 'ES' | d$condition == 'NS', ]
+d$condition <- factor(d$condition)
+
+
+
+```
+
+change variables for modelling\
+
+Sharing\
+resting state  -.5\
+sharing         .5\
+ 
+SharingOrder\
+E first    -.5
+N firts     .5
+
+
+
+```{r}
+
+d$freq <- as.factor(d$freq)
+d$condition <- as.factor(d$condition)
+d$sync <- as.factor(d$sync)
+d$FirstSharing <- as.factor(d$FirstSharing)
+
+for (irow in 1:nrow(d)){
+  if (d$condition[irow] == 'R1'){
+    d$Sharing[irow] <- -.5
+    d$SharingPLOT[irow] <- 'Resting state'
+  }
+  else if (d$condition[irow] == 'ES'){
+    d$Sharing[irow] <- .5
+    d$SharingPLOT[irow] <- 'Sharing'
+      }
+  else if (d$condition[irow] == 'NS'){
+    d$Sharing[irow] <- .5
+    d$SharingPLOT[irow] <- 'Sharing'
+      }
+} 
+
+for (irow in 1:nrow(d)){
+  if (d$FirstSharing[irow] == 'E'){
+    d$SharingOrder[irow] <- -.5
+  }
+  else if (d$FirstSharing[irow] == 'N'){
+    d$SharingOrder[irow] <- .5
+  }
+} 
+
+```
+
+CCORR SUDO PAIRS
+
+Here I would like to point (visually) that differences (statistical) between resting state 1 (baseline) are not in our favor. Only in Theta (frontal, temporal) IBS is higher in Sharing conditions than Baseline. 
+In alpha (all ROIs) and beta (temporal, parietal, occipital) IBS is higher in baseline. 
+
+```{r}
+d_ccorr <- d[d$sync == 'ccorr',]
+
+
+plotIBS <- ggplot(data=d_ccorr, aes(x=SharingPLOT, y=IBS, fill=SharingPLOT))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(freq~ROI)+
+  theme_bw()
+plotIBS
+```
+
+ISPC SUDO PAIRS
+
+Parietal difference in alpha and beta is also stronger for baseline than sharing conditions
+
+
+```{r}
+d_ccorr <- d[d$sync == 'ispc.',]
+
+
+plotIBS <- ggplot(data=d_ccorr, aes(x=SharingPLOT, y=IBS, fill=SharingPLOT))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(freq~ROI)+
+  theme_bw()
+plotIBS
+```
+
+
+

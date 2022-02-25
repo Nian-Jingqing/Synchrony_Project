@@ -1,0 +1,1095 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Question: Are there differences between resting state IBS dependent on type of sharing in between them?
+
+To answer it we compare IBS between 3 resting states and two conditions (firsts emotional sharing or first neutral sharing). It creates 3x2 design. I want to include random effect for pair in the model, as between pairs differences are big and pair wise estimates can be useful to correlate with our subjective data (questionnaires).
+
+We do such model for each ROI and each frequency and each sync measure (4x3x4). I do not want to include ROIs, frequencies or sync measures in the model because we are not asking questions about differences in IBS between different spatially regions of brain or different frequencies or sync measures.
+
+load required libraries
+```{r}
+library(lme4)
+library(lmerTest)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+```
+
+remove warnings
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+load data\
+add info about ROIs\
+add info about bands
+add info about sync measures\
+rename variables\
+concatenate in one data.frame\
+subset data to only resting states\
+
+```{r}
+list_all_files <-list.files("./csv_files_ccor_SUDO/",full.names = TRUE)
+d<-do.call("rbind",lapply(list_all_files,read.csv, header=FALSE))
+
+ROIs <- c('frontal', 'temporal', 'parietal', 'occipital')
+bands <-c('theta', 'alpha', 'beta_')
+sync_measures <- c('ccorr', 'p_cor', 'ispc.', 'amenv')
+
+
+freq<-c()
+condition<-c()
+sync <-c()
+for (rowi in 1:60){
+  freq_tmp <- substr(list_all_files[rowi],26,30)
+  freq_tmp <- rep(freq_tmp,36)
+  freq <- c(freq,freq_tmp)
+
+  condition_tmp <- substr(list_all_files[rowi],23,24)
+  condition_tmp <- rep(condition_tmp, 36)
+  condition<-c(condition,condition_tmp)
+  
+  sync_measures_tmp <- substr(list_all_files[rowi],32,36)
+  sync_measures_tmp <-  rep(sync_measures_tmp,36)
+  sync <- c(sync, sync_measures_tmp)
+  
+}
+
+
+d_pairs_order <- read.csv('order_pairs.csv')
+
+order_pairs <- rep(d_pairs_order$FirstSharing, 60)
+pair_numbers <- rep(1:36,60)
+d<-cbind(d,order_pairs,pair_numbers,freq,condition, sync)
+colnames(d)[1:4]<-ROIs
+colnames(d)[5]<-'FirstSharing'
+colnames(d)[6] <- 'pair'
+
+d <- gather(d, ROI, IBS, frontal:occipital,factor_key = TRUE)
+
+d <- d[d$condition == 'R1' | d$condition == 'R2' | d$condition == 'R3', ]
+d$condition <- factor(d$condition)
+```
+
+change variables for modelling\
+E = -.5\
+N = .5\
+
+
+
+
+```{r}
+
+d$freq <- as.factor(d$freq)
+d$condition <- as.factor(d$condition)
+d$sync <- as.factor(d$sync)
+d$FirstSharing <- as.factor(d$FirstSharing)
+
+for (irow in 1:nrow(d)){
+  if (d$FirstSharing[irow] == 'E'){
+    d$Sharing[irow] <- -.5
+  }
+  else if (d$FirstSharing[irow] == 'N'){
+    d$Sharing[irow] <- .5
+  }
+} 
+
+```
+
+
+
+1. CCorr
+
+subset data to ccorr
+```{r}
+d_ccorr <- d[d$sync == 'ccorr',]
+d_ccorr$sync <- factor(d_ccorr$sync)
+
+```
+
+A. theta\
+subset data to ccorr theta\
+
+```{r}
+d_ccorr_theta <- d_ccorr[d_ccorr$freq == 'theta',]
+d_ccorr_theta$freq <- factor(d_ccorr_theta$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+```{r}
+d_ccorr_theta_frontal <- d_ccorr_theta[d_ccorr_theta$ROI == 'frontal',]
+d_ccorr_theta_frontal$ROI <- factor(d_ccorr_theta_frontal$ROI)
+
+model_ccorr_theta_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_theta_frontal)
+summary(model_ccorr_theta_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_ccorr_theta_temporal <- d_ccorr_theta[d_ccorr_theta$ROI == 'temporal',]
+d_ccorr_theta_temporal$ROI <- factor(d_ccorr_theta_temporal$ROI)
+
+model_ccorr_theta_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_theta_temporal)
+summary(model_ccorr_theta_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**\
+
+We see a main difference between resting state 1 and resting state 3. It is independent of whether emotional or neutral sharing happened first.
+
+```{r}
+d_ccorr_theta_parietal <- d_ccorr_theta[d_ccorr_theta$ROI == 'parietal',]
+d_ccorr_theta_parietal$ROI <- factor(d_ccorr_theta_parietal$ROI)
+
+model_ccorr_theta_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_theta_parietal)
+summary(model_ccorr_theta_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_ccorr_theta_occipital <- d_ccorr_theta[d_ccorr_theta$ROI == 'occipital',]
+d_ccorr_theta_occipital$ROI <- factor(d_ccorr_theta_occipital$ROI)
+
+model_ccorr_theta_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_theta_occipital)
+summary(model_ccorr_theta_occipital)
+```
+
+PLOT CCORR THETA
+
+```{r}
+plotIBS <- ggplot(data=d_ccorr_theta, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('Ccorr theta')
+plotIBS
+```
+
+B. alpha\
+subset data to ccorr alpha\
+
+```{r}
+d_ccorr_alpha <- d_ccorr[d_ccorr$freq == 'alpha',]
+d_ccorr_alpha$freq <- factor(d_ccorr_alpha$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+```{r}
+d_ccorr_alpha_frontal <- d_ccorr_alpha[d_ccorr_alpha$ROI == 'frontal',]
+d_ccorr_alpha_frontal$ROI <- factor(d_ccorr_alpha_frontal$ROI)
+
+model_ccorr_alpha_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_alpha_frontal)
+summary(model_ccorr_alpha_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_ccorr_alpha_temporal <- d_ccorr_alpha[d_ccorr_alpha$ROI == 'temporal',]
+d_ccorr_alpha_temporal$ROI <- factor(d_ccorr_alpha_temporal$ROI)
+
+model_ccorr_alpha_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_alpha_temporal)
+summary(model_ccorr_alpha_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+We see a main difference between resting state 1 and resting state 3. It is independent of whether emotional or neutral sharing happened first.
+
+```{r}
+d_ccorr_alpha_parietal <- d_ccorr_alpha[d_ccorr_alpha$ROI == 'parietal',]
+d_ccorr_alpha_parietal$ROI <- factor(d_ccorr_alpha_parietal$ROI)
+
+model_ccorr_alpha_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_alpha_parietal)
+summary(model_ccorr_alpha_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_ccorr_alpha_occipital <- d_ccorr_alpha[d_ccorr_alpha$ROI == 'occipital',]
+d_ccorr_alpha_occipital$ROI <- factor(d_ccorr_alpha_occipital$ROI)
+
+model_ccorr_alpha_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_alpha_occipital)
+summary(model_ccorr_alpha_occipital)
+```
+
+PLOT CCORR alpha
+
+```{r}
+plotIBS <- ggplot(data=d_ccorr_alpha, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('Ccorr alpha')
+plotIBS
+```
+
+C. beta_\
+subset data to ccorr beta_\
+
+```{r}
+d_ccorr_beta_ <- d_ccorr[d_ccorr$freq == 'beta_',]
+d_ccorr_beta_$freq <- factor(d_ccorr_beta_$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**\
+
+We see a main difference between resting state 1 and resting state 2. However, this difference is independent of whether there was neutral or emotional sharing in between.
+
+```{r}
+d_ccorr_beta__frontal <- d_ccorr_beta_[d_ccorr_beta_$ROI == 'frontal',]
+d_ccorr_beta__frontal$ROI <- factor(d_ccorr_beta__frontal$ROI)
+
+model_ccorr_beta__frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_beta__frontal)
+summary(model_ccorr_beta__frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**\
+
+
+We see a main difference between resting state 1 and resting state 3. It is independent of whether emotional or neutral sharing happened first.
+
+```{r}
+d_ccorr_beta__temporal <- d_ccorr_beta_[d_ccorr_beta_$ROI == 'temporal',]
+d_ccorr_beta__temporal$ROI <- factor(d_ccorr_beta__temporal$ROI)
+
+model_ccorr_beta__temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_beta__temporal)
+summary(model_ccorr_beta__temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+We see significant interaction between resting states 1&2 and type of sharing. 
+It can be further evalaute with post hoc simple comparisons. Plot suggests that IBS is higher in RS2 than RS1 after neutral sharing, and it is lower in RS2 than RS1 after emotional sharing. 
+
+```{r}
+d_ccorr_beta__parietal <- d_ccorr_beta_[d_ccorr_beta_$ROI == 'parietal',]
+d_ccorr_beta__parietal$ROI <- factor(d_ccorr_beta__parietal$ROI)
+
+model_ccorr_beta__parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_beta__parietal)
+summary(model_ccorr_beta__parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_ccorr_beta__occipital <- d_ccorr_beta_[d_ccorr_beta_$ROI == 'occipital',]
+d_ccorr_beta__occipital$ROI <- factor(d_ccorr_beta__occipital$ROI)
+
+model_ccorr_beta__occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ccorr_beta__occipital)
+summary(model_ccorr_beta__occipital)
+```
+
+PLOT CCORR beta_
+
+```{r}
+plotIBS <- ggplot(data=d_ccorr_beta_, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('Ccorr beta_')
+plotIBS
+```
+
+
+
+
+
+2. p_cor\
+
+subset data to p_cor
+```{r}
+d_p_cor <- d[d$sync == 'p_cor',]
+d_p_cor$sync <- factor(d_p_cor$sync)
+
+```
+
+A. theta\
+subset data to p_cor theta\
+
+```{r}
+d_p_cor_theta <- d_p_cor[d_p_cor$freq == 'theta',]
+d_p_cor_theta$freq <- factor(d_p_cor_theta$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**\
+
+We see main effect of which sharing happened first. 
+
+```{r}
+d_p_cor_theta_frontal <- d_p_cor_theta[d_p_cor_theta$ROI == 'frontal',]
+d_p_cor_theta_frontal$ROI <- factor(d_p_cor_theta_frontal$ROI)
+
+model_p_cor_theta_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_theta_frontal)
+summary(model_p_cor_theta_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_p_cor_theta_temporal <- d_p_cor_theta[d_p_cor_theta$ROI == 'temporal',]
+d_p_cor_theta_temporal$ROI <- factor(d_p_cor_theta_temporal$ROI)
+
+model_p_cor_theta_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_theta_temporal)
+summary(model_p_cor_theta_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+We see a main effect of type of sharing and interaction between type of sharing and difference RS1 and RS3.\
+Interaction can be further investigated. \
+Plot suggests that IBS is higher in RS3 than RS1 when emotional sharing is first, and that RS3 is lower than RS1 when neutral sharing is first. 
+
+
+```{r}
+d_p_cor_theta_parietal <- d_p_cor_theta[d_p_cor_theta$ROI == 'parietal',]
+d_p_cor_theta_parietal$ROI <- factor(d_p_cor_theta_parietal$ROI)
+
+model_p_cor_theta_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_theta_parietal)
+summary(model_p_cor_theta_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+We see an interaction between type of sharing and difference RS1 and RS3.\
+Interaction can be further investigated. \
+Plot suggests that IBS is higher in RS3 than RS1 when emotional sharing is first, and that RS3 is lower than RS1 when neutral sharing is first. 
+
+```{r}
+d_p_cor_theta_occipital <- d_p_cor_theta[d_p_cor_theta$ROI == 'occipital',]
+d_p_cor_theta_occipital$ROI <- factor(d_p_cor_theta_occipital$ROI)
+
+model_p_cor_theta_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_theta_occipital)
+summary(model_p_cor_theta_occipital)
+```
+
+PLOT p_cor THETA
+
+```{r}
+plotIBS <- ggplot(data=d_p_cor_theta, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('p_cor theta')
+plotIBS
+```
+
+B. alpha\
+subset data to p_cor alpha\
+
+```{r}
+d_p_cor_alpha <- d_p_cor[d_p_cor$freq == 'alpha',]
+d_p_cor_alpha$freq <- factor(d_p_cor_alpha$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+```{r}
+d_p_cor_alpha_frontal <- d_p_cor_alpha[d_p_cor_alpha$ROI == 'frontal',]
+d_p_cor_alpha_frontal$ROI <- factor(d_p_cor_alpha_frontal$ROI)
+
+model_p_cor_alpha_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_alpha_frontal)
+summary(model_p_cor_alpha_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+We see a main difference between RS3 and RS1. However, it is independent of which sharing happened first. 
+
+```{r}
+d_p_cor_alpha_temporal <- d_p_cor_alpha[d_p_cor_alpha$ROI == 'temporal',]
+d_p_cor_alpha_temporal$ROI <- factor(d_p_cor_alpha_temporal$ROI)
+
+model_p_cor_alpha_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_alpha_temporal)
+summary(model_p_cor_alpha_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+We see a main difference between RS3 and RS1. However, it is independent of which sharing happened first. 
+
+
+```{r}
+d_p_cor_alpha_parietal <- d_p_cor_alpha[d_p_cor_alpha$ROI == 'parietal',]
+d_p_cor_alpha_parietal$ROI <- factor(d_p_cor_alpha_parietal$ROI)
+
+model_p_cor_alpha_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_alpha_parietal)
+summary(model_p_cor_alpha_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+We see a main difference between RS3 and RS1. However, it is independent of which sharing happened first. 
+
+
+```{r}
+d_p_cor_alpha_occipital <- d_p_cor_alpha[d_p_cor_alpha$ROI == 'occipital',]
+d_p_cor_alpha_occipital$ROI <- factor(d_p_cor_alpha_occipital$ROI)
+
+model_p_cor_alpha_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_alpha_occipital)
+summary(model_p_cor_alpha_occipital)
+```
+
+PLOT p_cor alpha
+
+```{r}
+plotIBS <- ggplot(data=d_p_cor_alpha, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('p_cor alpha')
+plotIBS
+```
+
+C. beta_\
+subset data to p_cor beta_\
+
+```{r}
+d_p_cor_beta_ <- d_p_cor[d_p_cor$freq == 'beta_',]
+d_p_cor_beta_$freq <- factor(d_p_cor_beta_$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+We see an interaction between type of sharing and difference between RS1 and RS2.\
+Interaction can be further investigated.\
+Plot suggests higher IBS in RS2 than RS1 after emotional sharing.
+
+```{r}
+d_p_cor_beta__frontal <- d_p_cor_beta_[d_p_cor_beta_$ROI == 'frontal',]
+d_p_cor_beta__frontal$ROI <- factor(d_p_cor_beta__frontal$ROI)
+
+model_p_cor_beta__frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_beta__frontal)
+summary(model_p_cor_beta__frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+
+```{r}
+d_p_cor_beta__temporal <- d_p_cor_beta_[d_p_cor_beta_$ROI == 'temporal',]
+d_p_cor_beta__temporal$ROI <- factor(d_p_cor_beta__temporal$ROI)
+
+model_p_cor_beta__temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_beta__temporal)
+summary(model_p_cor_beta__temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+```{r}
+d_p_cor_beta__parietal <- d_p_cor_beta_[d_p_cor_beta_$ROI == 'parietal',]
+d_p_cor_beta__parietal$ROI <- factor(d_p_cor_beta__parietal$ROI)
+
+model_p_cor_beta__parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_beta__parietal)
+summary(model_p_cor_beta__parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_p_cor_beta__occipital <- d_p_cor_beta_[d_p_cor_beta_$ROI == 'occipital',]
+d_p_cor_beta__occipital$ROI <- factor(d_p_cor_beta__occipital$ROI)
+
+model_p_cor_beta__occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_p_cor_beta__occipital)
+summary(model_p_cor_beta__occipital)
+```
+
+PLOT p_cor beta_
+
+```{r}
+plotIBS <- ggplot(data=d_p_cor_beta_, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('p_cor beta_')
+plotIBS
+```
+
+
+
+3. ispc.\
+
+subset data to ispc.\
+```{r}
+d_ispc. <- d[d$sync == 'ispc.',]
+d_ispc.$sync <- factor(d_ispc.$sync)
+
+```
+
+A. theta\
+subset data to ispc. theta\
+
+```{r}
+d_ispc._theta <- d_ispc.[d_ispc.$freq == 'theta',]
+d_ispc._theta$freq <- factor(d_ispc._theta$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+```{r}
+d_ispc._theta_frontal <- d_ispc._theta[d_ispc._theta$ROI == 'frontal',]
+d_ispc._theta_frontal$ROI <- factor(d_ispc._theta_frontal$ROI)
+
+model_ispc._theta_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._theta_frontal)
+summary(model_ispc._theta_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_ispc._theta_temporal <- d_ispc._theta[d_ispc._theta$ROI == 'temporal',]
+d_ispc._theta_temporal$ROI <- factor(d_ispc._theta_temporal$ROI)
+
+model_ispc._theta_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._theta_temporal)
+summary(model_ispc._theta_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+
+```{r}
+d_ispc._theta_parietal <- d_ispc._theta[d_ispc._theta$ROI == 'parietal',]
+d_ispc._theta_parietal$ROI <- factor(d_ispc._theta_parietal$ROI)
+
+model_ispc._theta_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._theta_parietal)
+summary(model_ispc._theta_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_ispc._theta_occipital <- d_ispc._theta[d_ispc._theta$ROI == 'occipital',]
+d_ispc._theta_occipital$ROI <- factor(d_ispc._theta_occipital$ROI)
+
+model_ispc._theta_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._theta_occipital)
+summary(model_ispc._theta_occipital)
+```
+
+PLOT ispc. THETA
+
+```{r}
+plotIBS <- ggplot(data=d_ispc._theta, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('ispc. theta')
+plotIBS
+```
+
+B. alpha\
+subset data to ispc. alpha\
+
+```{r}
+d_ispc._alpha <- d_ispc.[d_ispc.$freq == 'alpha',]
+d_ispc._alpha$freq <- factor(d_ispc._alpha$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+We see main difference between types of sharing.
+
+```{r}
+d_ispc._alpha_frontal <- d_ispc._alpha[d_ispc._alpha$ROI == 'frontal',]
+d_ispc._alpha_frontal$ROI <- factor(d_ispc._alpha_frontal$ROI)
+
+model_ispc._alpha_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._alpha_frontal)
+summary(model_ispc._alpha_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_ispc._alpha_temporal <- d_ispc._alpha[d_ispc._alpha$ROI == 'temporal',]
+d_ispc._alpha_temporal$ROI <- factor(d_ispc._alpha_temporal$ROI)
+
+model_ispc._alpha_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._alpha_temporal)
+summary(model_ispc._alpha_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+
+```{r}
+d_ispc._alpha_parietal <- d_ispc._alpha[d_ispc._alpha$ROI == 'parietal',]
+d_ispc._alpha_parietal$ROI <- factor(d_ispc._alpha_parietal$ROI)
+
+model_ispc._alpha_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._alpha_parietal)
+summary(model_ispc._alpha_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_ispc._alpha_occipital <- d_ispc._alpha[d_ispc._alpha$ROI == 'occipital',]
+d_ispc._alpha_occipital$ROI <- factor(d_ispc._alpha_occipital$ROI)
+
+model_ispc._alpha_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._alpha_occipital)
+summary(model_ispc._alpha_occipital)
+```
+
+PLOT ispc. alpha
+
+```{r}
+plotIBS <- ggplot(data=d_ispc._alpha, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('ispc. alpha')
+plotIBS
+```
+
+C. beta_\
+subset data to ispc. beta_\
+
+```{r}
+d_ispc._beta_ <- d_ispc.[d_ispc.$freq == 'beta_',]
+d_ispc._beta_$freq <- factor(d_ispc._beta_$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+
+```{r}
+d_ispc._beta__frontal <- d_ispc._beta_[d_ispc._beta_$ROI == 'frontal',]
+d_ispc._beta__frontal$ROI <- factor(d_ispc._beta__frontal$ROI)
+
+model_ispc._beta__frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._beta__frontal)
+summary(model_ispc._beta__frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+A lot going on here.\
+
+Main difference between types of sharing.\
+Main difference between RS1 and RS2.\
+Interaction between type of sharing and difference between RS1 and RS2\
+Interaction between type of sharing and difference between RS1 and RS3\
+
+
+
+
+```{r}
+d_ispc._beta__temporal <- d_ispc._beta_[d_ispc._beta_$ROI == 'temporal',]
+d_ispc._beta__temporal$ROI <- factor(d_ispc._beta__temporal$ROI)
+
+model_ispc._beta__temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._beta__temporal)
+summary(model_ispc._beta__temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+A lot going on here.\
+
+Main difference between types of sharing.\
+Interaction between type of sharing and difference between RS1 and RS2\
+Interaction between type of sharing and difference between RS1 and RS3\
+
+
+```{r}
+d_ispc._beta__parietal <- d_ispc._beta_[d_ispc._beta_$ROI == 'parietal',]
+d_ispc._beta__parietal$ROI <- factor(d_ispc._beta__parietal$ROI)
+
+model_ispc._beta__parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._beta__parietal)
+summary(model_ispc._beta__parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+Interaction between type of sharing and difference between RS1 and RS3\
+
+
+```{r}
+d_ispc._beta__occipital <- d_ispc._beta_[d_ispc._beta_$ROI == 'occipital',]
+d_ispc._beta__occipital$ROI <- factor(d_ispc._beta__occipital$ROI)
+
+model_ispc._beta__occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_ispc._beta__occipital)
+summary(model_ispc._beta__occipital)
+```
+
+PLOT ispc. beta_
+
+```{r}
+plotIBS <- ggplot(data=d_ispc._beta_, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('ispc. beta_')
+plotIBS
+```
+
+
+4. Amplitude envelope correlation\
+
+subset data to amenv\
+```{r}
+d_amenv <- d[d$sync == 'amenv',]
+d_amenv$sync <- factor(d_amenv$sync)
+
+```
+
+A. theta\
+subset data to amenv theta\
+
+```{r}
+d_amenv_theta <- d_amenv[d_amenv$freq == 'theta',]
+d_amenv_theta$freq <- factor(d_amenv_theta$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+```{r}
+d_amenv_theta_frontal <- d_amenv_theta[d_amenv_theta$ROI == 'frontal',]
+d_amenv_theta_frontal$ROI <- factor(d_amenv_theta_frontal$ROI)
+
+model_amenv_theta_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_theta_frontal)
+summary(model_amenv_theta_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_amenv_theta_temporal <- d_amenv_theta[d_amenv_theta$ROI == 'temporal',]
+d_amenv_theta_temporal$ROI <- factor(d_amenv_theta_temporal$ROI)
+
+model_amenv_theta_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_theta_temporal)
+summary(model_amenv_theta_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+```{r}
+d_amenv_theta_parietal <- d_amenv_theta[d_amenv_theta$ROI == 'parietal',]
+d_amenv_theta_parietal$ROI <- factor(d_amenv_theta_parietal$ROI)
+
+model_amenv_theta_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_theta_parietal)
+summary(model_amenv_theta_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+Interaction between type of sharing and difference between RS1 and RS2\
+
+```{r}
+d_amenv_theta_occipital <- d_amenv_theta[d_amenv_theta$ROI == 'occipital',]
+d_amenv_theta_occipital$ROI <- factor(d_amenv_theta_occipital$ROI)
+
+model_amenv_theta_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_theta_occipital)
+summary(model_amenv_theta_occipital)
+```
+
+PLOT amenv THETA
+
+```{r}
+plotIBS <- ggplot(data=d_amenv_theta, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('amenv theta')
+plotIBS
+```
+
+B. alpha\
+subset data to amenv alpha\
+
+```{r}
+d_amenv_alpha <- d_amenv[d_amenv$freq == 'alpha',]
+d_amenv_alpha$freq <- factor(d_amenv_alpha$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+```{r}
+d_amenv_alpha_frontal <- d_amenv_alpha[d_amenv_alpha$ROI == 'frontal',]
+d_amenv_alpha_frontal$ROI <- factor(d_amenv_alpha_frontal$ROI)
+
+model_amenv_alpha_frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_alpha_frontal)
+summary(model_amenv_alpha_frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+```{r}
+d_amenv_alpha_temporal <- d_amenv_alpha[d_amenv_alpha$ROI == 'temporal',]
+d_amenv_alpha_temporal$ROI <- factor(d_amenv_alpha_temporal$ROI)
+
+model_amenv_alpha_temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_alpha_temporal)
+summary(model_amenv_alpha_temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+```{r}
+d_amenv_alpha_parietal <- d_amenv_alpha[d_amenv_alpha$ROI == 'parietal',]
+d_amenv_alpha_parietal$ROI <- factor(d_amenv_alpha_parietal$ROI)
+
+model_amenv_alpha_parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_alpha_parietal)
+summary(model_amenv_alpha_parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+```{r}
+d_amenv_alpha_occipital <- d_amenv_alpha[d_amenv_alpha$ROI == 'occipital',]
+d_amenv_alpha_occipital$ROI <- factor(d_amenv_alpha_occipital$ROI)
+
+model_amenv_alpha_occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_alpha_occipital)
+summary(model_amenv_alpha_occipital)
+```
+
+PLOT amenv alpha
+
+```{r}
+plotIBS <- ggplot(data=d_amenv_alpha, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('amenv alpha')
+plotIBS
+```
+
+C. beta_\
+subset data to amenv beta_\
+
+```{r}
+d_amenv_beta_ <- d_amenv[d_amenv$freq == 'beta_',]
+d_amenv_beta_$freq <- factor(d_amenv_beta_$freq)
+```
+
+Subset data to frontal\
+model\
+summary model\
+
+**FRONTAL**
+
+We see main effect of difference between RS1 and RS2. Independent of which type of sharing comes first
+
+```{r}
+d_amenv_beta__frontal <- d_amenv_beta_[d_amenv_beta_$ROI == 'frontal',]
+d_amenv_beta__frontal$ROI <- factor(d_amenv_beta__frontal$ROI)
+
+model_amenv_beta__frontal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_beta__frontal)
+summary(model_amenv_beta__frontal)
+```
+Subset data to temporal\
+model\
+summary model\
+
+**TEMPORAL**
+
+
+```{r}
+d_amenv_beta__temporal <- d_amenv_beta_[d_amenv_beta_$ROI == 'temporal',]
+d_amenv_beta__temporal$ROI <- factor(d_amenv_beta__temporal$ROI)
+
+model_amenv_beta__temporal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_beta__temporal)
+summary(model_amenv_beta__temporal)
+```
+Subset data to parietal\
+model\
+summary model\
+
+**PARIETAL**
+
+```{r}
+d_amenv_beta__parietal <- d_amenv_beta_[d_amenv_beta_$ROI == 'parietal',]
+d_amenv_beta__parietal$ROI <- factor(d_amenv_beta__parietal$ROI)
+
+model_amenv_beta__parietal <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_beta__parietal)
+summary(model_amenv_beta__parietal)
+```
+Subset data to occipital\
+model\
+summary model\
+
+**OCCIPITAL**
+
+We see interaction between type of sharing and difference between RS1 and RS2.
+
+
+```{r}
+d_amenv_beta__occipital <- d_amenv_beta_[d_amenv_beta_$ROI == 'occipital',]
+d_amenv_beta__occipital$ROI <- factor(d_amenv_beta__occipital$ROI)
+
+model_amenv_beta__occipital <- lmer(IBS ~  Sharing * condition  + (1|pair), data=d_amenv_beta__occipital)
+summary(model_amenv_beta__occipital)
+```
+
+PLOT amenv beta_
+
+```{r}
+plotIBS <- ggplot(data=d_amenv_beta_, aes(x=condition, y=IBS, fill=condition))+
+  geom_violin()+
+  geom_tufteboxplot()+
+  facet_grid(FirstSharing ~ ROI)+
+  theme_bw()+
+  ggtitle('amenv beta_')
+plotIBS
+```
+
+
+
+
+
